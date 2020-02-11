@@ -1,5 +1,5 @@
 ---
-title: "Laboratorio 1"
+title: "R - tidyverse y R - Base."
 author: "Juvenal Campos"
 date: "2/10/2020"
 output: html_document
