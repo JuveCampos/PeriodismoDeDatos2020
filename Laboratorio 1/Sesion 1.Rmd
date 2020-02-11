@@ -1,0 +1,267 @@
+---
+title: "Laboratorio 1"
+author: "Juvenal Campos"
+date: "2/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Sesión de repaso de R
+
+## R - tidyverse y R - Base.
+
+En la programación en R, existen dos sabores de programación muy distintos: R - tidy y R - base. 
+
+La principal característica de R - tidy es el uso de la pipa y la concatenación `%>%` , mientras que la principal característica de R - base es el uso de los corchetes `[` y `]`.
+
+Con ambos estilos se puede llegar a obtener los mismos resultados, sin embargo, estos estilos tienen distintas ventajas y desventajas. 
+
+### R - Base: 
+
+**Ventajas:**
+
+* Es la forma original de escribir código de R. 
+
+* Hay mucho material (de antes de 2012) disponible para aprender a programar en R bajo este estilo, y si contratas un curso en línea es MUY seguro que este sea el estilo que te enseñen.
+
+* Es más rápido que R - tidy (en caso de que te importe la velocidad). 
+(Ejemplos donde si nos importa la velocidad: https://lnppmicrositio.shinyapps.io/redCaminosShiny/)
+
+* Aprenderlo nos ayudará a entender mejor como programar en R, al ser más versátil que los verbos. 
+
+* Hay algunas cosas que son más fáciles de escribir en este estilo. 
+
+**Desventajas:**
+
+* Es complicado de escribir (hay que usar muchos paréntesis). 
+
+* Es menos legíble que R - tidy (los corchetes son menos entendibles que los verbos). 
+
+* La curva de aprendizaje es más elevada, por lo que puede desalentar a los estudiantes nuevos. 
+
+
+### R - tidyverse
+
+**Ventajas:** 
+
+* Es muy legible, y fácil de entender. 
+
+* Tiene una curva de aprendizaje muy rápida. 
+
+* La escritura de código se facilita al poder concatenar (pipear) nuestos comandos. 
+
+* Cuenta con el uso de verbos que facilitan la lectura de lo que estamos programando. 
+
+* Es la manera moderna de aprender R, y los materiales de referencia se están escribiendo en este estilo. 
+
+* Filosofía de programación congruente con múltiples librerías de R (como ggplot2, stringr, purrr, etc). 
+
+* Tiene a la pipa %>% :3.
+
+**Desventajas:**
+
+* Es algo lento (en comparación con el R - base).
+
+* Muchos profesores apenas estan aprendiendo a utilizarlo. 
+
+**PREGUNTA: Cuál estilo/sabor recomiendo?**
+
+**R:** Ambos son muy buenos. 
+
+**PREGUNTA: Cuál utilizo yo?**
+
+**R:** Ambos.
+
+Es por esto, que hay que prepararlos para cualquier adversidad que se les atraviese. 
+
+## R-base
+
+**Formulario rapido:** 
+
+**Subsetting**
+
+Sea `x` un objeto `dataframe`, `tibble` o `matrix`, entonces: 
+
+`x[1,]` seleccionará la fila numero `1`;
+
+`x[,1]` seleccionara la columna numero `1`;
+
+`x[-1,]` removerá la fila numero `1`;
+
+`x[,-c(1,3,5,7)]` removerá las columnas numero `1, 3, 5 y 7`;
+
+
+**Creación de nuevas variables**
+
+Sea `x` un objeto `dataframe` o `tibble` entonces: 
+
+`x$nombre_variable` seleccionará la variable llamada `nombre_variable` del objeto `x`. 
+
+`x$nueva_columna <- c(1,2,3,4,5)` creará una nueva columna dentro de `x`, cuyo nombre será `nueva_columna` y que contendrá los valores del 1 al 5 _sí y sólo sí_ la columna `x` tiene 5 renglones de tamaño. 
+
+`x[,c("Nombre", "Apellido")]` seleccionará las columnas llamadas exactamente "Nombre" o "Apellido".
+
+**Filtrado**
+
+Sea `y` un vector lógico (es decir, que toma valores TRUE o FALSE) el cual se le pasa a un objeto `x`, `dataframe`, `tibble` o `matrix`, entonces la tabla se filtrará, quedando aquellos renglones o columnas en los que el objeto `y` sea TRUE y se eliminarán los renglones o columnas en donde el objeto `y` sea FALSE. 
+
+Ejemplo: 
+
+```{r}
+data("mtcars")
+
+# Renglones que cumplen la condicion que se expresa aca abajo
+vector_logico <- mtcars$hp > 100
+
+# Solo nos quedamos con los renglones donde los hp sean mayores a 100
+mtcars[vector_logico,]
+
+# Ahora, quedemonos con los renglones de los carros que tienen exactamente 8 cilindros
+vector_logico <- mtcars$cyl == 8
+
+mtcars[vector_logico,]
+
+# En un solo paso 
+mtcars[mtcars$cyl == 8,]
+
+# Doble filtro, ahora quedemonos con los que tienen exactamente 8 cilindros y mas de 250 hp
+mtcars[mtcars$cyl == 8 & mtcars$hp > 250,]
+
+```
+
+Para practicar, vamos a hacer un ejemplo práctico. 
+
+## Ejemplo práctico, manipulando la base de los tweets de la película Parásitos, ganando el Oscar. 
+
+Para el ejemplo práctico de hoy, vamos a llevar a cabo las manipulaciones básicas que vimos el semestre 
+
+```{r}
+# Librerias
+library(readxl)
+library(tidyverse)
+
+# Abrimos la base
+bd <- read_xlsx("tweetsParasite.xlsx")
+
+# Exploramos la base 
+View(bd)
+```
+
+Manipulación de base de datos. 
+
+1. Queremos quedarnos con las siguientes columnas: 
+
+* `screen_name`
+
+* `source`
+
+* `text`
+
+* `display_text_width`
+
+* `created_at`
+
+
+```{r}
+# En tidy 
+bd <- bd %>% 
+  select(screen_name, source, text, display_text_width, created_at)
+
+# En r-base
+bd[,c("screen_name", "source", "text", "display_text_width", "created_at")]
+
+```
+
+_Ojo con las comillas!_
+
+2. Queremos quedarnos con los renglones que van del primero al 501. 
+
+```{r}
+# En tidy 
+bd %>% 
+  head(501)
+
+# En rbase
+bd[1:501,]
+
+```
+
+3. Queremos quedarnos con los renglones 1, 3, 5, 7 y 12,001. 
+
+```{r}
+# En tidy 
+bd %>% 
+  slice(c(1,3,5,7,12001))
+
+# En rbase
+bd[c(1,3,5,7,12001),]
+
+```
+
+4. Queremos quedarnos con los renglones cuyos tweets hayan sido menores de 25 caracteres, y con las columnas `screen_name` y `text`.
+
+```{r}
+
+# En tidy 
+bd %>% 
+  filter(display_text_width <= 25) %>% 
+  select(screen_name, text)
+  
+# En base
+vectorLogico <- bd$display_text_width <= 25
+bd[vectorLogico, c("screen_name", "text")]
+
+```
+
+5. Queremos crear una variable (`tamanio`) que nos diga si el tweet es chico (menor a 50 caracteres) o grande (mayor a 100 caracteres). 
+
+```{r}
+# En tidy 
+bd %>% 
+  mutate(tamanio = ifelse(display_text_width >= 100, 
+                         "Grande", 
+                         "Pequenio"))
+# En R-base
+bd$tamanio <- ifelse(bd$display_text_width >= 100, 
+                         "Grande", 
+                         "Pequenio")
+```
+
+6. Queremos quedarnos solo con los tweets que fueron escritos en Twitter para Android ("Twitter for Android").
+
+```{r}
+# En tidy 
+bd %>% 
+  filter(source == "Twitter for Android")
+  
+# En R-base
+bd[bd$source == "Twitter for Android",]
+
+```
+
+7. Otras operaciones. 
+
+```{r}
+
+# Renombrar las variables una por una
+names(bd)[1] <- "NombreUsuario"
+
+# Renombrara todas las variables de golpe
+names(bd) <- c("NombreUsuario", "fuenteDelTweet", 
+               "Texto", "Tamanio", "Fecha de Creacion", 
+               "clasificacion")
+
+bd
+
+# Arrange por tamano (menor a mayor)
+bd[order(bd$Tamanio),]
+bd[order(bd$Tamanio, decreasing = TRUE),]
+
+```
+
+
+**Nota! group_by() y summarise() mejor ni lo intenten, esta bien complicado.**
+
