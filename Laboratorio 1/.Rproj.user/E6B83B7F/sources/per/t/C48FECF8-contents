@@ -1,0 +1,103 @@
+# Implementacion seria de RTweet
+library(rtweet)
+
+## search for 18000 tweets using the rstats hashtag
+rt <- search_tweets(
+  "apple since:2020-01-23 until:2020-01-25 lang:es", n = 100, include_rts = FALSE
+)
+
+## random sample for 30 seconds (default)
+rt <- stream_tweets("")
+
+# ## stream tweets from london for 60 seconds
+# rt <- stream_tweets(lookup_coords("mexico city, mx"), timeout = 60)
+## stream london tweets for a week (60 secs x 60 mins * 24 hours *  7 days)
+stream_tweets(
+  "realdonaldtrump,trump",
+  timeout = 60 * 60 * 24 * 7,
+  file_name = "tweetsabouttrump.json",
+  parse = FALSE
+)
+
+## read in the data as a tidy tbl data frame
+djt <- parse_stream("tweetsabouttrump.json")
+
+
+## stream tweets from london for 60 seconds
+rt <- stream_tweets(lookup_coords("london, uk"), timeout = 60)
+
+
+## get user IDs of accounts followed by CNN
+cnn_fds <- get_friends("juvenalcamposf")
+
+## lookup data on those accounts
+cnn_fds_data <- lookup_users(cnn_fds$user_id)
+
+## get user IDs of accounts following CNN
+cnn_flw <- get_followers("juvenalcamposf", n = 600)
+
+## lookup data on those accounts
+cnn_flw_data <- lookup_users(cnn_flw$user_id)
+
+## get user IDs of accounts followed by CNN
+tmls <- get_timelines(c("juvenalcamposf"), n = 3200)
+
+## plot the frequency of tweets for each user over time
+plt <- tmls %>%
+  dplyr::filter(created_at > "2017-10-29") %>%
+  dplyr::group_by(screen_name) %>%
+  ts_plot("days", trim = 1L) +
+  ggplot2::geom_point() +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(
+    legend.title = ggplot2::element_blank(),
+    legend.position = "bottom",
+    plot.title = ggplot2::element_text(face = "bold")) +
+  ggplot2::labs(
+    x = NULL, y = NULL,
+    title = "Frequency of Twitter statuses posted by news organization",
+    subtitle = "Twitter status (tweet) counts aggregated by day from October/November 2017",
+    caption = "\nSource: Data collected from Twitter's REST API via rtweet"
+  )
+
+class(plt)
+plotly::ggplotly(plt)
+
+#Get the 3,000 most recently favorited statuses by JK Rowling.
+jkr <- get_favorites("juvenalcamposf", n = 1000)
+
+library(tidyverse)
+jkr %>% 
+  group_by(screen_name) %>% 
+  summarise(n = n()) %>% 
+  arrange(-n) %>% 
+  View()
+
+
+# Search for 1,000 users with the rstats hashtag in their profile bios.
+## search for users with #rstats in their profiles
+usrs <- search_users("ocuituco", n = 1000)
+
+# Discover what’s currently trending in San Francisco.
+mx <- get_trends("mexico city")
+
+
+
+
+## search for 10,000 tweets sent from the US
+rt <- search_tweets(
+  "lang:en", geocode = lookup_coords("usa"), n = 5000
+)
+
+## create lat/lng variables using all available tweet and profile geo-location data
+rt <- lat_lng(rt)
+
+names(rt)
+
+## plot state boundaries
+par(mar = c(0, 0, 0, 0))
+maps::map("state", lwd = .25)
+
+
+## plot lat and lng points onto state map
+with(rt, points(lng, lat, pch = 20, cex = .75, col = rgb(0, .3, .7, .75)))

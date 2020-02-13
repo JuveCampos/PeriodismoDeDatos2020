@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1581389447161.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2877422002",
+    "id" : "9821E00C",
+    "lastKnownWriteTime" : 1581608726,
+    "last_content_update" : 1581608726282,
+    "path" : "~/Documents/GitHub/PeriodismoDeDatos2020/Laboratorio 1/Sesion 1.Rmd",
+    "project_path" : "Sesion 1.Rmd",
+    "properties" : {
+        "cursorPosition" : "178,17",
+        "scrollLine" : "174"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

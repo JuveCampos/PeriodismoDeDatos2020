@@ -65,7 +65,7 @@ Con ambos estilos se puede llegar a obtener los mismos resultados, sin embargo, 
 
 * Es algo lento (en comparación con el R - base).
 
-* Muchos profesores apenas estan aprendiendo a utilizarlo. 
+* Muchas personas (que ya trabajaban cómodas con R-Base) apenas estan aprendiendo a utilizarlo. 
 
 **PREGUNTA: Cuál estilo/sabor recomiendo?**
 
@@ -75,40 +75,54 @@ Con ambos estilos se puede llegar a obtener los mismos resultados, sin embargo, 
 
 **R:** Ambos.
 
-Es por esto, que hay que prepararlos para cualquier adversidad que se les atraviese. 
+Es por esto que hay que estar preparados para cualquier situación que se atraviese en temas de programación en R. 
 
 ## R-base
 
 **Formulario rapido:** 
 
+* Si `x` es un vector (un vector de texto, lógico, numérico o factor categórico), x[1] seleccionará el elemento 1 del vector `x`. 
+
+* Si `x` es un objeto tabular (un `dataframe`, `tibble` o `matrix`), se utiliza una coma dentro de los corchetes. Lo que se coloque a la izquierda de la coma seleccionará las filas de `x`, mientras que lo que se coloque a la derecha de la coma seleccionará las columnas de `x`. 
+
+$$x[filas,columnas]$$
+
 **Subsetting**
 
 Sea `x` un objeto `dataframe`, `tibble` o `matrix`, entonces: 
 
-`x[1,]` seleccionará la fila numero `1`;
+* `x[1,]` seleccionará la fila numero `1`;
 
-`x[,1]` seleccionara la columna numero `1`;
+* `x[,1]` seleccionara la columna numero `1`;
 
-`x[-1,]` removerá la fila numero `1`;
+* `x[-1,]` removerá la fila numero `1`;
 
-`x[,-c(1,3,5,7)]` removerá las columnas numero `1, 3, 5 y 7`;
+* `x[,-c(1,3,5,7)]` removerá las columnas numero `1, 3, 5 y 7`;
 
 
 **Creación de nuevas variables**
 
 Sea `x` un objeto `dataframe` o `tibble` entonces: 
 
-`x$nombre_variable` seleccionará la variable llamada `nombre_variable` del objeto `x`. 
+* `x$nombre_variable` seleccionará la variable llamada `nombre_variable` del objeto `x`. 
 
-`x$nueva_columna <- c(1,2,3,4,5)` creará una nueva columna dentro de `x`, cuyo nombre será `nueva_columna` y que contendrá los valores del 1 al 5 _sí y sólo sí_ la columna `x` tiene 5 renglones de tamaño. 
+* `x$nueva_columna <- c(1,2,3,4,5)` creará una nueva columna dentro de `x`, cuyo nombre será `nueva_columna` y que contendrá los valores del 1 al 5 _sí y sólo sí_ la columna `x` tiene 5 renglones de tamaño. 
 
-`x[,c("Nombre", "Apellido")]` seleccionará las columnas llamadas exactamente "Nombre" o "Apellido".
+* `x[,c("Nombre", "Apellido")]` seleccionará las columnas llamadas exactamente "Nombre" o "Apellido".
 
 **Filtrado**
 
 Sea `y` un vector lógico (es decir, que toma valores TRUE o FALSE) el cual se le pasa a un objeto `x`, `dataframe`, `tibble` o `matrix`, entonces la tabla se filtrará, quedando aquellos renglones o columnas en los que el objeto `y` sea TRUE y se eliminarán los renglones o columnas en donde el objeto `y` sea FALSE. 
 
-Ejemplo: 
+Eso significa que: 
+
+* Si el objeto `x` es un vector de tamaño 5, entonces 
+
+        `x[c(TRUE, TRUE, FALSE, TRUE, FALSE)]`
+
+seleccionará los elementos `1, 2 y 4`.
+
+Ejemplo práctico: 
 
 ```{r}
 data("mtcars")
@@ -132,13 +146,34 @@ mtcars[mtcars$cyl == 8 & mtcars$hp > 250,]
 
 ```
 
+**Reordenamiento**
+
+Sea `x` un vector cuyos elementos tienen un orden que va de 1 hasta n, y deseamos cambiar el orden de sus elementos, entonces introducimos dentro de los corchetes un vector numérico que seleccione el orden y los elementos que deseamos, por ejemplo:
+
+`x[c(7,2,3,1,7),]` seleccionará las filas numero `7, 2, 3, 1 y 7 nuevamente`.
+
+Si deseamos que el vector se ordene de manera ascendente, descendente o por orden alfabético `[A-Z]`, entonces utilizamos la función `sort()`. 
+
+Sea `x` un vector numérico, entonces: 
+
+* `sort(x)` ordenará los elementos de manera ascendente (menor a mayor). 
+
+* `sort(x, decreasing = TRUE)` ordenará los elementos de manera descendente (mayor a menor).
+
+Sea `x` un vector de texto, entonces: 
+
+* `sort(x)` ordenará los elementos de la A a la Z. 
+
+* `sort(x, decreasing = TRUE)` ordenará los elementos de la Z a la A. 
+
+
 Para practicar, vamos a hacer un ejemplo práctico. 
 
 ## Ejemplo práctico, manipulando la base de los tweets de la película Parásitos, ganando el Oscar. 
 
 Para el ejemplo práctico de hoy, vamos a llevar a cabo las manipulaciones básicas que vimos el semestre pasado.
 
-```{r}
+```{r, cache=FALSE, message=FALSE, warning=FALSE}
 # Librerias
 library(readxl)
 library(tidyverse)
@@ -146,8 +181,6 @@ library(tidyverse)
 # Abrimos la base
 bd <- read_xlsx("tweetsParasite.xlsx")
 
-# Exploramos la base 
-View(bd)
 ```
 
 Manipulación de base de datos. 

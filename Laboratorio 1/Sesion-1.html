@@ -408,32 +408,47 @@ summary {
 <p><strong>Desventajas:</strong></p>
 <ul>
 <li><p>Es algo lento (en comparación con el R - base).</p></li>
-<li><p>Muchos profesores apenas estan aprendiendo a utilizarlo.</p></li>
+<li><p>Muchas personas (que ya trabajaban cómodas con R-Base) apenas estan aprendiendo a utilizarlo.</p></li>
 </ul>
 <p><strong>PREGUNTA: Cuál estilo/sabor recomiendo?</strong></p>
 <p><strong>R:</strong> Ambos son muy buenos.</p>
 <p><strong>PREGUNTA: Cuál utilizo yo?</strong></p>
 <p><strong>R:</strong> Ambos.</p>
-<p>Es por esto, que hay que prepararlos para cualquier adversidad que se les atraviese.</p>
+<p>Es por esto que hay que estar preparados para cualquier situación que se atraviese en temas de programación en R.</p>
 </div>
 </div>
 <div id="r-base" class="section level2">
 <h2>R-base</h2>
 <p><strong>Formulario rapido:</strong></p>
+<ul>
+<li><p>Si <code>x</code> es un vector (un vector de texto, lógico, numérico o factor categórico), x[1] seleccionará el elemento 1 del vector <code>x</code>.</p></li>
+<li><p>Si <code>x</code> es un objeto tabular (un <code>dataframe</code>, <code>tibble</code> o <code>matrix</code>), se utiliza una coma dentro de los corchetes. Lo que se coloque a la izquierda de la coma seleccionará las filas de <code>x</code>, mientras que lo que se coloque a la derecha de la coma seleccionará las columnas de <code>x</code>.</p></li>
+</ul>
+<p><span class="math display">\[x[filas,columnas]\]</span></p>
 <p><strong>Subsetting</strong></p>
 <p>Sea <code>x</code> un objeto <code>dataframe</code>, <code>tibble</code> o <code>matrix</code>, entonces:</p>
-<p><code>x[1,]</code> seleccionará la fila numero <code>1</code>;</p>
-<p><code>x[,1]</code> seleccionara la columna numero <code>1</code>;</p>
-<p><code>x[-1,]</code> removerá la fila numero <code>1</code>;</p>
-<p><code>x[,-c(1,3,5,7)]</code> removerá las columnas numero <code>1, 3, 5 y 7</code>;</p>
+<ul>
+<li><p><code>x[1,]</code> seleccionará la fila numero <code>1</code>;</p></li>
+<li><p><code>x[,1]</code> seleccionara la columna numero <code>1</code>;</p></li>
+<li><p><code>x[-1,]</code> removerá la fila numero <code>1</code>;</p></li>
+<li><p><code>x[,-c(1,3,5,7)]</code> removerá las columnas numero <code>1, 3, 5 y 7</code>;</p></li>
+</ul>
 <p><strong>Creación de nuevas variables</strong></p>
 <p>Sea <code>x</code> un objeto <code>dataframe</code> o <code>tibble</code> entonces:</p>
-<p><code>x$nombre_variable</code> seleccionará la variable llamada <code>nombre_variable</code> del objeto <code>x</code>.</p>
-<p><code>x$nueva_columna &lt;- c(1,2,3,4,5)</code> creará una nueva columna dentro de <code>x</code>, cuyo nombre será <code>nueva_columna</code> y que contendrá los valores del 1 al 5 <em>sí y sólo sí</em> la columna <code>x</code> tiene 5 renglones de tamaño.</p>
-<p><code>x[,c(&quot;Nombre&quot;, &quot;Apellido&quot;)]</code> seleccionará las columnas llamadas exactamente “Nombre” o “Apellido”.</p>
+<ul>
+<li><p><code>x$nombre_variable</code> seleccionará la variable llamada <code>nombre_variable</code> del objeto <code>x</code>.</p></li>
+<li><p><code>x$nueva_columna &lt;- c(1,2,3,4,5)</code> creará una nueva columna dentro de <code>x</code>, cuyo nombre será <code>nueva_columna</code> y que contendrá los valores del 1 al 5 <em>sí y sólo sí</em> la columna <code>x</code> tiene 5 renglones de tamaño.</p></li>
+<li><p><code>x[,c(&quot;Nombre&quot;, &quot;Apellido&quot;)]</code> seleccionará las columnas llamadas exactamente “Nombre” o “Apellido”.</p></li>
+</ul>
 <p><strong>Filtrado</strong></p>
 <p>Sea <code>y</code> un vector lógico (es decir, que toma valores TRUE o FALSE) el cual se le pasa a un objeto <code>x</code>, <code>dataframe</code>, <code>tibble</code> o <code>matrix</code>, entonces la tabla se filtrará, quedando aquellos renglones o columnas en los que el objeto <code>y</code> sea TRUE y se eliminarán los renglones o columnas en donde el objeto <code>y</code> sea FALSE.</p>
-<p>Ejemplo:</p>
+<p>Eso significa que:</p>
+<ul>
+<li><p>Si el objeto <code>x</code> es un vector de tamaño 5, entonces</p>
+<pre><code>  `x[c(TRUE, TRUE, FALSE, TRUE, FALSE)]`</code></pre></li>
+</ul>
+<p>seleccionará los elementos <code>1, 2 y 4</code>.</p>
+<p>Ejemplo práctico:</p>
 <pre class="r"><code>data(&quot;mtcars&quot;)
 
 # Renglones que cumplen la condicion que se expresa aca abajo
@@ -506,6 +521,20 @@ mtcars[mtcars$cyl == 8 &amp; mtcars$hp &gt; 250,]</code></pre>
 <pre><code>##                 mpg cyl disp  hp drat   wt qsec vs am gear carb
 ## Ford Pantera L 15.8   8  351 264 4.22 3.17 14.5  0  1    5    4
 ## Maserati Bora  15.0   8  301 335 3.54 3.57 14.6  0  1    5    8</code></pre>
+<p><strong>Reordenamiento</strong></p>
+<p>Sea <code>x</code> un vector cuyos elementos tienen un orden que va de 1 hasta n, y deseamos cambiar el orden de sus elementos, entonces introducimos dentro de los corchetes un vector numérico que seleccione el orden y los elementos que deseamos, por ejemplo:</p>
+<p><code>x[c(7,2,3,1,7),]</code> seleccionará las filas numero <code>7, 2, 3, 1 y 7 nuevamente</code>.</p>
+<p>Si deseamos que el vector se ordene de manera ascendente, descendente o por orden alfabético <code>[A-Z]</code>, entonces utilizamos la función <code>sort()</code>.</p>
+<p>Sea <code>x</code> un vector numérico, entonces:</p>
+<ul>
+<li><p><code>sort(x)</code> ordenará los elementos de manera ascendente (menor a mayor).</p></li>
+<li><p><code>sort(x, decreasing = TRUE)</code> ordenará los elementos de manera descendente (mayor a menor).</p></li>
+</ul>
+<p>Sea <code>x</code> un vector de texto, entonces:</p>
+<ul>
+<li><p><code>sort(x)</code> ordenará los elementos de la A a la Z.</p></li>
+<li><p><code>sort(x, decreasing = TRUE)</code> ordenará los elementos de la Z a la A.</p></li>
+</ul>
 <p>Para practicar, vamos a hacer un ejemplo práctico.</p>
 </div>
 <div id="ejemplo-práctico-manipulando-la-base-de-los-tweets-de-la-película-parásitos-ganando-el-oscar." class="section level2">
@@ -513,23 +542,10 @@ mtcars[mtcars$cyl == 8 &amp; mtcars$hp &gt; 250,]</code></pre>
 <p>Para el ejemplo práctico de hoy, vamos a llevar a cabo las manipulaciones básicas que vimos el semestre pasado.</p>
 <pre class="r"><code># Librerias
 library(readxl)
-library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ────────────────────────────── tidyverse 1.3.0 ──</code></pre>
-<pre><code>## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
-## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
-## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
-## ✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
-<pre><code>## ── Conflicts ───────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code># Abrimos la base
-bd &lt;- read_xlsx(&quot;tweetsParasite.xlsx&quot;)
+library(tidyverse)
 
-# Exploramos la base 
-View(bd)</code></pre>
-<pre><code>## Warning in system2(&quot;/usr/bin/otool&quot;, c(&quot;-L&quot;, shQuote(DSO)), stdout = TRUE):
-## running command ''/usr/bin/otool' -L '/Library/Frameworks/R.framework/
-## Resources/modules/R_de.so'' had status 1</code></pre>
+# Abrimos la base
+bd &lt;- read_xlsx(&quot;tweetsParasite.xlsx&quot;)</code></pre>
 <p>Manipulación de base de datos.</p>
 <ol style="list-style-type: decimal">
 <li>Queremos quedarnos con las siguientes columnas:</li>
