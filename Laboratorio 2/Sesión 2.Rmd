@@ -1,0 +1,40 @@
+---
+title: "Cuestionario Medidas de Tendencia Central"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+A partir de la base, conteste las siguientes preguntas o ejecute las siguientes acciones. Se recomienda que priorice el uso de `rbase` sobre el uso del `tidyverse`, pero eso queda a criterio de cada quién.
+
+1. (Use google). Defina que es RMarkdown, para que sirve y que es un archivo *.rmd. 
+
+2. En RMarkdown, explique para que sirven los siguientes códigos: 
+
+* ```{r}
+
+* ```
+
+* `_ texto _`
+
+* `** texto **`
+
+3. ¿Cuales son las medidas de tendencia central? 
+
+4. ¿En qué casos se puede calcular cada una? 
+
+5. En un script (o en RMarkdown, si deseas aprender a usarlo), lea la base de datos `datos.csv` y guardala en un objeto llamado `f`.
+
+6. Describa la base de datos. (¿Qué contiene, qué variables tiene, que dimensiones?)
+
+7. ¿Que podrías comentar sobre la calidad de los datos?
+
+8. ¿Cual es la variable 1 de la base de datos? ¿Cual es la variable 10? ¿Cual es la variable 15? 
+
+9. Quédate con las variables 3, 4, 5, 6, 7, 13, 14, 15, 16, 17 y 21. 
+
+10. ¿Qué medidas de tendencia central se pueden aplicar a dichas variables? 
+
+11. Obtenga dichas medidas. Comenta algo sobre ellas. 
