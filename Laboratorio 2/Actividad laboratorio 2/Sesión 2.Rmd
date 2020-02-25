@@ -25,7 +25,7 @@ A partir de la base, conteste las siguientes preguntas o ejecute las siguientes 
 
 4. ¿En qué casos se puede calcular cada una? 
 
-5. En un script (o en RMarkdown, si deseas aprender a usarlo), lea la base de datos `datos.csv` y guardala en un objeto llamado `f`.
+5. En un script (o en RMarkdown, si deseas aprender a usarlo), lea la base de datos `datos.xlsx` y guardala en un objeto llamado `f`.
 
 6. Describa la base de datos. (¿Qué contiene, qué variables tiene, que dimensiones?)
 

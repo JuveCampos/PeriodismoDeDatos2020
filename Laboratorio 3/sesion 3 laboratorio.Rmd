@@ -1,0 +1,160 @@
+---
+title: "Laboratorio 3 - Periodismo de Datos"
+author: "Juvenal Campos"
+date: "2/24/2020"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Laboratorio 3. 
+
+Contenido: 
+
+En este laboratorio abordaremos los siguientes temas: 
+
+1. Las librerías `sjmisc` y `sjlabelled`.
+
+2. ¿Qué significa usar labels? 
+
+**Referencias:**
+
+* https://strengejacke.github.io/sjmisc/articles/exploringdatasets.html
+
+
+# 1. Las librerías `sjmisc` y `sjlabelled`.
+
+Las librerías `sjmisc` y `sjlabelled` son librerías que nos permiten realizar diversas funciones con bases de datos. Se usan, especialmente, para trabajar con datos de encuestas. 
+
+El paquete `sjmisc` presenta una ventaja comparativa al poder trabajar bien con datos etiquetados, debido a que ofrece opciones para transformación de datos con estas características. 
+
+Para el ejemplo de hoy, utilizaremos los datos de la encuesta `efc`, la cual contiene información sobre la situación de los cuidadores de adultos mayores en Europa (proyecto EUROFAMCARE). 
+
+### Instalación. 
+
+Las librerías se instalan como cualquier otro paquete de R. 
+
+```{r, eval=FALSE}
+library(pacman)
+p_load(sjmisc, sjlabelled)
+```
+
+### Datos labeleados
+
+```{r, message=FALSE, cache=FALSE, warning=FALSE}
+# Librerias
+library(sjmisc)
+library(dplyr)
+data(efc)
+
+# Exploramos la base de datos
+head(efc)
+
+# Vemos los nombres de los datos
+names(efc)
+
+# Ahora la vemos en el View
+# View(efc)
+# Ves la diferencia?
+
+# Obteniendo las etiquetas: 
+library(sjlabelled)
+
+# Funcion para obtener las etiquetas de una variable
+sjlabelled::get_labels(efc$e42dep)
+
+# Funcion para obtener las etiquetas de todas las variables del data.frame
+sjlabelled::get_label(efc)
+
+# Funcion para obtener los valores asociados a esas etiquetas.
+sjlabelled::get_values(efc$e42dep)
+
+```
+
+## Funciones 
+
+### Imprimir frecuencias con etiquetas. 
+
+**Qué contiene esta base de datos?**
+
+Lo primero que nos podría interesar es probablemente la distribución del sexo. Podemos checar las frecuencias de los datos etiquetados con la función `frq`. Esta función requiere un vector o data.frame como entrada e imprime la etiqueta de la variable en la primera linea, seguida de una tabla de frecuencia con valores, etiquetas, conteos y porcentajes de los datos del vector. 
+
+```{r}
+# Imprimimos la variable de sexo?
+frq(efc$c161sex)
+```
+
+Las mujeres son el 75.55 % de la muestra. 
+
+
+### Encontrando variables en un data.frame
+
+Para encontrar variables en un data.frame etiquetado, utilizamos la función `find_var()`: 
+
+```{r}
+# Esta función nos encuentra la columna con la palabra especificada
+find_var(efc, "dependency", out = "table")
+
+# Esta función nos da la columna con la palabra especificada
+find_var(efc, "dependency", out = "df") %>% head()
+
+# Esta función nos encuentra el numero de la columna con la palabra especificada
+find_var(efc, "dependency", out = "index")
+
+```
+
+## Tablas cruzadas. 
+
+El paquete nos permite cruzar dos variables para ver la relación que hay entre ellas. Por ejemplo, a partir de cruzar la variable de sexo con la de dependencia del cuidado respecto al cuidador. 
+
+```{r}
+# Tabla que muestra la distribución de personas con cuidados con respecto al sexo del cuidador. 
+flat_table(efc, e42dep, c161sex)
+
+# Proporciones, en función del sexo, 
+flat_table(efc, e42dep, c161sex, margin = "col")
+
+```
+
+# Recodificando variables. 
+
+Vamos a generar una nueva variable llamada "carga" a partir de la variable `neg_c_7` (Impacto negativo con 7 items). 
+
+Para esto, vamos a utilizar la función de recodificación, `rec`, para asignar etiquetas a los valores numéricos de una variable. 
+
+```{r}
+# Obtenemos la etiqueta de la columna
+get_label(efc$neg_c_7)
+
+# Obtenemos la etiqueta de los valores
+get_labels(efc$neg_c_7)
+
+# Obtenemos los valores
+unique(efc$neg_c_7) %>% sort()
+
+# Obtenemos las frecuencias
+frq(efc$neg_c_7)
+
+# generamos la nueva variable, con rec
+efc$carga = rec(efc$neg_c_7, 
+  rec = c("min:9=1 [baja]; 10:12=2[moderada]; 13:max=3[alta]; else=NA"), 
+  var.label = "Carga subjetiva",
+  as.num = FALSE # Para que nos de un factor
+  )
+
+# Obtenemos etiquetas
+get_labels(efc$carga)
+get_values(efc$carga)
+
+# Obtenemos frecuencias a partir de las etiquetas
+frq(efc$carga)
+
+```
+
+
+
