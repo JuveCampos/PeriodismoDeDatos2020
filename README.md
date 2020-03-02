@@ -12,4 +12,4 @@ Continuación de la exploración de bases de datos del Twitter. Se repasó el co
 
 ### Laboratorio 3.
 
-Se hizo un repaso sobre las librerías `sjmisc` y `sjlabelled`, al uso de bases de datos etiquetadas y a otros conceptos relacionados.
+Se hizo un repaso sobre las librerías `sjmisc` y `sjlabelled`, al uso de bases de datos etiquetadas y a otros conceptos relacionados. Para repasar la práctica, revisar el material de este [enlace](https://rpubs.com/Juve_Campos/labeledData).
