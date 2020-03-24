@@ -1,0 +1,170 @@
+---
+title: "Laboratorio 5 - Periodismo de Datos"
+author: "Juvenal Campos"
+date: "3/23/2020"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Vamos a seguir explorando las tablas de Contingencia para cruzar dos o mas variables entre si, asi como seguir practicando el uso de las bases de datos etiquetadas. 
+
+* El día de hoy vamos a revisar: 
+
+1. **Tareas:** Ver para que sirve cada uno de los paquetes que utilizamos.
+
+2. **Ejemplo:** Utilizaremos una base de datos de admisiones a _cierta_ universidad para ver si hay una discriminación por género en los procesos de admisión. 
+
+# Librerías a utilizar. 
+
+Utilizaremos las siguientes librerías: 
+
+* `sjlabelled`, para poner etiquetas a nuestras tibbles y data.frames. 
+
+* `sjmisc`, para poder realizar cruces de variables en bases de datos. 
+
+* `tidyverse`, para manipular bases de datos y usar la pipa `%>%`. 
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
+# Cargamos las liberias: 
+library(sjlabelled)
+library(sjmisc)
+library(tidyverse)
+```
+
+Procesado de la base de datos.
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
+# Cargamos la base de datos 
+load("Admissions.RData")
+(Ad  <- as_tibble(Admissions) %>% 
+  rename(Admitido = Admit, 
+         Sexo = Gender,
+         Departamento = Dept) %>% 
+  mutate(Admitido = case_when(Admitido == "Admitted" ~ 1, 
+                              Admitido == "Rejected" ~ 0), 
+         Sexo = case_when(Sexo == "Male" ~ 1, 
+                          Sexo == "Female" ~ 2)
+         )   )
+
+# Guardamos la base para el exámen: 
+write.csv(Ad, "Admisiones.csv", na="", fileEncoding = "UTF-8", row.names = FALSE)
+```
+
+A partir de la base de datos que tenemos de admisiones, vamos a generar variables etiquetadas: 
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
+
+Ad <- read_csv("https://raw.githubusercontent.com/JuveCampos/presentaciones/master/PdD2020/Admisiones.csv")
+
+# 1. Generamos las etiquetas de las columnas. 
+Ad$Admitido <- set_label(Ad$Admitido, "Condición de admisión a la Universidad")
+Ad$Sexo <- set_label(Ad$Sexo, "Sexo o genero del aspirante")
+Ad$Departamento <- set_label(Ad$Departamento, "Departamento académico")
+```
+
+Ahora generamos las claves de los datos de las variables.
+
+**Claves:**
+
+* En la columna _Admitido_: 
+
+> 1: admitido; 0: rechazado
+
+* En la columna Sexo: 
+
+> 1: Hombre; 2:Mujer
+
+* En la columna departamento, cada letra hace referencia a un Departamento Académico distinto.  
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
+
+# Recodificamos variables: 
+Ad <- Ad %>% 
+  mutate(Admitido = rec(Admitido, rec = "1=1 [Admitido]; 0=0 [Rechazado]"), 
+         Sexo = rec(Sexo, rec = "1=1 [Hombre]; 2=2 [Mujer]"))
+
+# Generamos una flat table por renglones
+flat_table(Ad, Admitido, Sexo, margin = "row")
+
+# Generamos una flat table por columnas
+flat_table(Ad, Admitido, Sexo, margin = "col")
+
+```
+
+**¿Qué conclusiones podemos sacar de estas tablas? **
+
+**¿Qué procedería a partir de estas tablas?**
+
+
+# Desagregando los datos por Departamento. 
+
+Ahora, vamos a desagregar los datos por departamento, para ver si hay departamentos que aportan más a la discriminación en las admisiones por género. 
+
+```{r}
+
+# 1. Cuantos departamentos hay? 
+get_labels(Ad$Departamento)
+# Hay 5 departamentos. 
+
+# Obtenemos una flat_table de 3 variables 
+flat_table(data = Ad, Admitido, Sexo, Departamento)
+flat_table(data = Ad, Admitido, Sexo, Departamento, margin = "col")
+
+# Obtenemos las flat_tables por departamento: 
+
+# A
+Ad %>% 
+  filter(Departamento == "A") %>% 
+  flat_table(Admitido, Sexo, margin = "row")
+
+# B
+Ad %>% 
+  filter(Departamento == "B") %>% 
+  flat_table(Admitido, Sexo, margin = "row")
+
+# C
+Ad %>% 
+  filter(Departamento == "C") %>% 
+  flat_table(Admitido, Sexo, margin = "row")
+
+# D
+Ad %>% 
+  filter(Departamento == "D") %>% 
+  flat_table(Admitido, Sexo, margin = "row")
+
+# E
+Ad %>% 
+  filter(Departamento == "E") %>% 
+  flat_table(Admitido, Sexo, margin = "row")
+
+```
+
+**¿A qué conclusiones llegamos al ver estas tablas?** 
+
+
+# Gráficas 
+
+Realizaremos ahora gráficas para explorar los datos. 
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
+# Librerias
+library(ggplot2)
+
+# Gr'aficas de admitidos
+Ad %>% 
+  group_by(Departamento, Sexo, Admitido) %>% 
+  count() %>% 
+  ggplot(aes(x = as_factor(Sexo), y = n, fill = as_factor(Admitido))) + 
+  geom_col(position = "dodge") +
+  facet_grid(. ~ Departamento)
+  
+```
+
+
