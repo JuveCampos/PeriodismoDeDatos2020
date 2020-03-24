@@ -17,3 +17,11 @@ Se hizo un repaso sobre las librerías `sjmisc` y `sjlabelled`, al uso de bases 
 ### Laboratorio 4. Repaso. 
 
 Laboratorio de repaso sobre Tablas de contingencia, nuevamente obtención de estadísticas y medidas de tendencia central y manejo de bases de datos etiquetadas. Para ver el texto del laboratorio, consultar el siguiente [enlace](https://rpubs.com/Juve_Campos/sesion4labPdD).
+
+### Laboratorio 5. Flat Tables y admisiones dispares. 
+
+Laboratorio de repaso donde practicamos las tablas de contingencia en un ejemplo donde analizamos datos de admisiones a cierta universidad de los Estados Unidos. El código se encuentra disponible en esta [página](https://rpubs.com/Juve_Campos/sesion5pdd2020). Como información adicional, se recomienda checar el siguiente [enlace](https://medium.com/@dexter.shawn/how-uc-berkeley-almost-got-sued-because-of-lying-data-aaa5d641f571).
+
+
+
+
