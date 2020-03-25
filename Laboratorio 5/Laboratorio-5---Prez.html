@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>  Laboratorio 1</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="     Juvenal Campos" />
+    <meta name="date" content="2020-03-24" />
+    <link href="libs/remark-css-0.0.1/cide.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <br><br>Laboratorio 1
+## Laboratorio 5 - Tablas de contingencia
+### <br><br><br><br><br>Juvenal Campos
+### CIDE-LNPP
+### 2020-03-24
+
+---
+
+
+
+
+
+# Laboratorio 5. Periodismo de Datos. 
+
+Vamos a seguir explorando las tablas de Contingencia para cruzar dos o mas variables entre si, asi como seguir practicando el uso de las bases de datos etiquetadas. 
+-- 
+
+* El día de hoy vamos a revisar: 
+
+1. **Tareas:** Ver para que sirve cada uno de los paquetes que utilizamos.
+
+--
+
+2. **Ejemplo:** Utilizaremos una base de datos de admisiones a _cierta_ universidad para ver si hay una discriminación por género en los procesos de admisión. 
+
+---
+
+### Breve Comercial 
+
+Este ejemplo viene de la clase 5 del curso de la Escuela de Métodos de **Modelos estadísticos** de Javier Marquez (@JMarquezP). Si estan interesados en el programa, la liga es la siguiente: 
+
+&gt; https://www.lnpp.mx/evento/modelos-estadisticos/
+
+---
+
+# Librerías a utilizar. 
+
+Utilizaremos las siguientes librerías: 
+
+* `sjlabelled`, para poner etiquetas a nuestras tibbles y data.frames. 
+
+* `sjmisc`, para poder realizar cruces de variables en bases de datos. 
+
+* `tidyverse`, para manipular bases de datos y usar la pipa `%&gt;%`. 
+
+
+```r
+# Cargamos las liberias: 
+library(sjlabelled)
+library(sjmisc)
+library(tidyverse)
+```
+
+---
+
+Leemos la base de datos proveniente de la siguiente dirección web: 
+
+https://raw.githubusercontent.com/JuveCampos/presentaciones/master/PdD2020/Admisiones.csv
+
+
+```r
+Ad &lt;- read_csv("https://raw.githubusercontent.com/JuveCampos/presentaciones/master/PdD2020/Admisiones.csv")
+
+head(Ad)
+```
+
+```
+## # A tibble: 6 x 3
+##   Admitido  Sexo Departamento
+##      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;       
+## 1        1     1 A           
+## 2        1     1 A           
+## 3        1     1 A           
+## 4        1     1 A           
+## 5        1     1 A           
+## 6        1     1 A
+```
+
+---
+
+Esta base de datos contiene información de solicitudes de admision estudiantiles a diversos programas de licenciatura de una _muy reconocida universidad de los Estados Unidos_.
+
+Contiene 3 columnas, las cuales son: 
+
+* `Admitido`, la cual nos dice si un estudiante fué admitido o fué rechazado del programa de la universidad al que solicitó entrar. 
+
+* `Sexo`, el sexo del solicitante. 
+
+* `Departamento`, el departamento académico de la Universidad al cual solicitó el ingreso. 
+
+---
+
+# Etiquetando variables. 
+
+A partir de esta base de datos, vamos a generar variables etiquetadas.
+
+_Les pegamos el post-it encima._
+
+
+```r
+# 1. Generamos las etiquetas de las columnas. 
+Ad$Admitido &lt;- set_label(Ad$Admitido, "Condición de admisión a la Universidad")
+Ad$Sexo &lt;- set_label(Ad$Sexo, "Sexo o genero del aspirante")
+Ad$Departamento &lt;- set_label(Ad$Departamento, "Departamento académico")
+```
+
+---
+
+# Asignación de claves a los valores de la variable. 
+
+Ahora generamos las claves de los datos de las variables.
+
+**Claves:**
+
+* En la columna _Admitido_: 
+
+&gt; 1: admitido; 0: rechazado
+
+* En la columna Sexo: 
+
+&gt; 1: Hombre; 2:Mujer
+
+---
+
+* En la columna departamento, cada letra hace referencia a un Departamento Académico distinto, teniendo los siguientes departamentos: `A`, `B`, `C`, `D`, `E` y `F`.
+
+* Recodemos, digo, recordemos como es el formato para hacer recodificación de una variable con el paquete `sjmisc` y la función `rec()`:
+
+&lt;b style = 'color:#015c44;'&gt;"ClaveVieja1 = ClaveNueva1 [TextoEtiqueta1];&lt;br&gt;&lt;br&gt;
+ClaveVieja2 = ClaveNueva2 [TextoEtiqueta2];&lt;br&gt;&lt;br&gt;
+...&lt;br&gt;&lt;br&gt;
+ClaveViejaN = ClaveNuevaN [TextoEtiquetaN]"&lt;br&gt;&lt;br&gt;
+"&lt;/b&gt;
+
+---
+
+
+```r
+# Recodificamos variables: 
+Ad &lt;- Ad %&gt;% 
+  mutate(Admitido = rec(Admitido, rec = "1=1 [Admitido]; 0=0 [Rechazado]"), 
+         Sexo = rec(Sexo, rec = "1=1 [Hombre]; 2=2 [Mujer]"))
+```
+
+---
+
+# Análisis de los datos: generando flat_tables. 
+
+Ahora vamos a hacer los cruces de las variables. Recordemos del último laboratorio que los cruces los podemos hacer mediante las _tablas de contingencia_, las cuales _son tablas que se emplean para registrar y analizar la asociación entre dos o más variables, habitualmente de naturaleza cualitativa (nominales u ordinales)_.
+
+--
+
+* En este caso... **¿Qué nos interesa analizar?** 
+
+Dado que sospechamos que en esta escuela hay una discriminación por género en el proceso de admisión, vamos a analizar **primero** las proporciones de alumnos rechazados y aceptados dentro del proceso de admisión. 
+
+---
+
+
+```r
+# Generamos una flat table por renglones
+flat_table(Ad, Admitido, Sexo, margin = "row")
+```
+
+```
+##           Sexo Hombre Mujer
+## Admitido                   
+## Rechazado       53.88 46.12
+## Admitido        68.26 31.74
+```
+
+*¿Que nos dice la tabla anterior?* 
+
+Que del total de rechazados hay mas hombres que mujeres. 
+Que del total de admitidos, las mujeres aportan tan solo la tercera parte de las admisiones. 
+
+---
+
+
+```r
+# Grafica de admitidos: 
+Ad %&gt;% 
+  filter(Admitido == 1) %&gt;% 
+  group_by(Sexo) %&gt;% 
+  count() %&gt;% 
+  ggplot(aes(x = as_factor(Sexo), y = n, fill = as_factor(Sexo))) + 
+  geom_col() + 
+  scale_fill_manual(values = c("blue", "yellow"))
+```
+
+![](Laboratorio-5---Prez_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+---
+
+
+```r
+# Generamos una flat table por columnas
+flat_table(Ad, Admitido, Sexo, margin = "col")
+```
+
+```
+##           Sexo Hombre Mujer
+## Admitido                   
+## Rechazado       55.48 69.65
+## Admitido        44.52 30.35
+```
+
+---
+
+*¿Que nos dice la tabla anterior?* 
+
+Que del total de mujeres que solicitaron admisión, fueron rechazadas casi el 70 % de ellas, mientras que de los hombres que solicitaron admisión, tan solo fueron rechazados el 55 %.
+
+**¿A qué conclusión llegamos entonces al ver estas tablas? Comenten entre todos.**
+
+# Desagregando los datos por Departamento. 
+
+Hay una variable que hace falta analizar: la admisión por departamento. 
+
+Para esto, vamos a desagregar los datos por departamento, para ver si hay departamentos que aportan más a la discriminación en las admisiones por género. 
+
+---
+
+*¿Cómo se les ocurre que podamos afrontar esto analizando por departamento?. Comenten entre todos.*
+
+
+```r
+# 1. Cuantos departamentos hay? 
+get_labels(Ad$Departamento)
+```
+
+```
+## [1] "A" "B" "C" "D" "E" "F"
+```
+
+```r
+# Hay 5 departamentos. 
+```
+
+A mi se me ocurre primero hacer una `flat_table()` de 3 variables (una tabla tridimensional, como dirían los matemáticos), la cual quedaría como se ve a continuación: 
+
+---
+
+
+```r
+# Obtenemos una flat_table de 3 variables 
+flat_table(data = Ad, Admitido, Sexo, Departamento)
+```
+
+```
+##                  Departamento   A   B   C   D   E   F
+## Admitido  Sexo                                       
+## Rechazado Hombre              313 207 205 279 138 351
+##           Mujer                19   8 391 244 299 317
+## Admitido  Hombre              512 353 120 138  53  22
+##           Mujer                89  17 202 131  94  24
+```
+
+---
+
+
+```r
+flat_table(data = Ad, Admitido, Sexo, Departamento, margin = "col")
+```
+
+```
+##                  Departamento     A     B     C     D     E     F
+## Admitido  Sexo                                                   
+## Rechazado Hombre              33.55 35.38 22.33 35.23 23.63 49.16
+##           Mujer                2.04  1.37 42.59 30.81 51.20 44.40
+## Admitido  Hombre              54.88 60.34 13.07 17.42  9.08  3.08
+##           Mujer                9.54  2.91 22.00 16.54 16.10  3.36
+```
+
+---
+
+Esto está muy complicado de leer, así que filtraremos los datos y haremos la tabla por cada uno de los departamentos académicos. 
+
+
+```r
+# A
+
+# Tabla
+Ad %&gt;% 
+  filter(Departamento == "A") %&gt;% 
+  flat_table(Admitido, Sexo, margin = "row")
+```
+
+```
+##           Sexo Hombre Mujer
+## Admitido                   
+## Rechazado       94.28  5.72
+## Admitido        85.19 14.81
+```
+
+```r
+# Grafica
+Ad %&gt;% 
+  group_by(Departamento, Sexo, Admitido) %&gt;% 
+  count() %&gt;% 
+  # Aqui contamos los admitidos y rechazados por Dpto y Sexo
+  filter(Departamento == "A") %&gt;% 
+  # Aqui nos quedamos solo con los del Dpto. A
+  ggplot(aes(x = as_factor(Sexo), 
+             y = n, 
+             fill = as_factor(Admitido))) + 
+  # Aquí declaramos los elementos Estéticos (los canales de Segasi)
+  geom_col(position = "dodge") 
+```
+
+![](Laboratorio-5---Prez_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+```r
+  # Aquí declaramos los elementos Geométricos (las marcas de Segasi)
+```
+
+---
+
+Ahora, hacemos lo mismo para los demás departamentos: 
+
+
+```r
+# B
+Ad %&gt;% 
+  filter(Departamento == "B") %&gt;% 
+  flat_table(Admitido, Sexo, margin = "row")
+```
+
+```
+##           Sexo Hombre Mujer
+## Admitido                   
+## Rechazado       96.28  3.72
+## Admitido        95.41  4.59
+```
+
+```r
+# C
+Ad %&gt;% 
+  filter(Departamento == "C") %&gt;% 
+  flat_table(Admitido, Sexo, margin = "row")
+```
+
+```
+##           Sexo Hombre Mujer
+## Admitido                   
+## Rechazado       34.40 65.60
+## Admitido        37.27 62.73
+```
+
+```r
+# D
+Ad %&gt;% 
+  filter(Departamento == "D") %&gt;% 
+  flat_table(Admitido, Sexo, margin = "row")
+```
+
+```
+##           Sexo Hombre Mujer
+## Admitido                   
+## Rechazado       53.35 46.65
+## Admitido        51.30 48.70
+```
+
+```r
+# E
+Ad %&gt;% 
+  filter(Departamento == "E") %&gt;% 
+  flat_table(Admitido, Sexo, margin = "row")
+```
+
+```
+##           Sexo Hombre Mujer
+## Admitido                   
+## Rechazado       31.58 68.42
+## Admitido        36.05 63.95
+```
+
+---
+
+# Gráficas 
+
+Realizaremos ahora gráficas para explorar los datos. 
+
+
+```r
+# Librerias
+library(ggplot2)
+
+# Gr'aficas de admitidos
+Ad %&gt;% 
+  group_by(Departamento, Sexo, Admitido) %&gt;% 
+  count() %&gt;% 
+  ggplot(aes(x = as_factor(Sexo), y = n, fill = as_factor(Admitido))) + 
+  geom_col(position = "dodge") +
+  facet_grid(. ~ Departamento)
+```
+
+![](Laboratorio-5---Prez_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

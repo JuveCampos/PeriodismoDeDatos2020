@@ -112,7 +112,7 @@ flat_table(efc, e15relat, c85cop4, margin = "col")
 
 1. Elabore la tabla de contingencias para `c88cop7` y para `e16sex` utilizando `table()` y `flat_table()`. Explique brevemente a que conclusiones llega. 
 
-```{r, echo=FALSE, eval = FALSE}
+```{r}
 # Que es la etiqueta? 
 get_label(efc$c88cop7)
 
@@ -127,7 +127,7 @@ flat_table(efc, e16sex, c88cop7, margin = "row")
 Igualmente, obtenga los valores máximos y mínimos, la desviación estándar y los principales cuantiles. 
 
 
-```{r, echo=FALSE, eval = FALSE}
+```{r}
 # Media
 efc %>%
   summarise(media_e17age = mean(e17age, na.rm = T),
@@ -151,8 +151,7 @@ summary(efc$c160age)
 
 3. Obtenga el histograma de frecuencias para las variables arriba mencionadas. ¿Existe algún sesgo? ¿Derecho o izquierdo? 
 
-
-```{r, echo=FALSE, eval = FALSE}
+```{r}
 
 get_label(efc$e17age)
 hist(efc$e17age, 
@@ -182,8 +181,8 @@ hist(efc$c160age,
 
 4. Obtenga un `boxplot` para las variables previamente mencionadas. ¿Existen valores atípicos u _outliers_?
 
-
-```{r, echo=FALSE, eval = FALSE}
+```{r}
 boxplot(efc$e17age, efc$c160age)
 ```
 
+No existen valores atípicos u outliers. 

@@ -8,10 +8,11 @@ output:
     highlight: github
 ---
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# Laboratorio 5. Periodismo de Datos. 
 
 Vamos a seguir explorando las tablas de Contingencia para cruzar dos o mas variables entre si, asi como seguir practicando el uso de las bases de datos etiquetadas. 
 
@@ -20,6 +21,14 @@ Vamos a seguir explorando las tablas de Contingencia para cruzar dos o mas varia
 1. **Tareas:** Ver para que sirve cada uno de los paquetes que utilizamos.
 
 2. **Ejemplo:** Utilizaremos una base de datos de admisiones a _cierta_ universidad para ver si hay una discriminación por género en los procesos de admisión. 
+
+### Breve Comercial 
+
+Este ejemplo viene de la clase 5 del curso de la Escuela de Métodos de **Modelos estadísticos** de Javier Márquez  [@JMarquezP](https://twitter.com/JMarquezP). Si estan interesados en el programa, la liga es la siguiente: 
+
+> https://www.lnpp.mx/evento/modelos-estadisticos/
+
+Igualmente, para entender mejor el contexto de este problema, se recomienda leer el siguiente artículo de [Medium](https://medium.com/@dexter.shawn/how-uc-berkeley-almost-got-sued-because-of-lying-data-aaa5d641f571). 
 
 # Librerías a utilizar. 
 
@@ -38,9 +47,8 @@ library(sjmisc)
 library(tidyverse)
 ```
 
-Procesado de la base de datos.
 
-```{r cache=FALSE, message=FALSE, warning=FALSE}
+```{r cache=FALSE, message=FALSE, warning=FALSE, eval=FALSE, echo=FALSE }
 # Cargamos la base de datos 
 load("Admissions.RData")
 (Ad  <- as_tibble(Admissions) %>% 
@@ -57,17 +65,39 @@ load("Admissions.RData")
 write.csv(Ad, "Admisiones.csv", na="", fileEncoding = "UTF-8", row.names = FALSE)
 ```
 
-A partir de la base de datos que tenemos de admisiones, vamos a generar variables etiquetadas: 
+Leemos la base de datos proveniente de la siguiente dirección web: https://raw.githubusercontent.com/JuveCampos/presentaciones/master/PdD2020/Admisiones.csv
 
 ```{r cache=FALSE, message=FALSE, warning=FALSE}
 
 Ad <- read_csv("https://raw.githubusercontent.com/JuveCampos/presentaciones/master/PdD2020/Admisiones.csv")
 
+head(Ad)
+```
+
+Esta base de datos contiene información de solicitudes de admision estudiantiles a diversos programas de licenciatura de una _muy reconocida universidad de los Estados Unidos_.
+
+Contiene 3 columnas, las cuales son: 
+
+* `Admitido`, la cual nos dice si un estudiante fué admitido o fué rechazado del programa de la universidad al que solicitó entrar. 
+
+* `Sexo`, el sexo del solicitante. 
+
+* `Departamento`, el departamento académico de la Universidad al cual solicitó el ingreso. 
+
+# Etiquetando variables. 
+
+A partir de esta base de datos, vamos a generar variables etiquetadas.
+
+_Les pegamos el post-it encima._
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
 # 1. Generamos las etiquetas de las columnas. 
 Ad$Admitido <- set_label(Ad$Admitido, "Condición de admisión a la Universidad")
 Ad$Sexo <- set_label(Ad$Sexo, "Sexo o genero del aspirante")
 Ad$Departamento <- set_label(Ad$Departamento, "Departamento académico")
 ```
+
+# Asignación de claves a los valores de la variable. 
 
 Ahora generamos las claves de los datos de las variables.
 
@@ -81,77 +111,192 @@ Ahora generamos las claves de los datos de las variables.
 
 > 1: Hombre; 2:Mujer
 
-* En la columna departamento, cada letra hace referencia a un Departamento Académico distinto.  
+* En la columna departamento, cada letra hace referencia a un Departamento Académico distinto, teniendo los siguientes departamentos: `A`, `B`, `C`, `D`, `E` y `F`.
+
+* Recodemos, digo, recordemos como es el formato para hacer recodificación de una variable con el paquete `sjmisc`:
+
+<b style = 'color:#015c44;'>"ClaveVieja1 = ClaveNueva1 [TextoEtiqueta1];<br><br>
+ClaveVieja2 = ClaveNueva2 [TextoEtiqueta2];<br><br>
+...<br><br>
+ClaveViejaN = ClaveNuevaN [TextoEtiquetaN]"<br><br></b>
 
 ```{r cache=FALSE, message=FALSE, warning=FALSE}
-
 # Recodificamos variables: 
 Ad <- Ad %>% 
   mutate(Admitido = rec(Admitido, rec = "1=1 [Admitido]; 0=0 [Rechazado]"), 
          Sexo = rec(Sexo, rec = "1=1 [Hombre]; 2=2 [Mujer]"))
+```
 
+# Análisis de los datos: generando flat_tables. 
+
+Ahora vamos a hacer los cruces de las variables. Recordemos del último laboratorio que los cruces los podemos hacer mediante las _tablas de contingencia_, las cuales _son tablas que se emplean para registrar y analizar la asociación entre dos o más variables, habitualmente de naturaleza cualitativa (nominales u ordinales)_.
+
+* En este caso... **¿Qué nos interesa analizar?** 
+
+Dado que sospechamos que en esta escuela hay una discriminación por género en el proceso de admisión, vamos a analizar **primero** las proporciones de alumnos rechazados y aceptados dentro del proceso de admisión. 
+
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
 # Generamos una flat table por renglones
 flat_table(Ad, Admitido, Sexo, margin = "row")
+```
 
-# Generamos una flat table por columnas
-flat_table(Ad, Admitido, Sexo, margin = "col")
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
+# Grafica de admitidos: 
+Ad %>% 
+  filter(Admitido == 1) %>% 
+  group_by(Sexo) %>% 
+  count() %>% 
+  ggplot(aes(x = as_factor(Sexo), y = n, fill = as_factor(Sexo))) + 
+  geom_col() + 
+  scale_fill_manual(values = c("blue", "yellow"))
 
 ```
 
-**¿Qué conclusiones podemos sacar de estas tablas? **
 
-**¿Qué procedería a partir de estas tablas?**
+```{r cache=FALSE, message=FALSE, warning=FALSE}
+# Generamos una flat table por columnas
+flat_table(Ad, Admitido, Sexo, margin = "col")
+```
 
+*¿Que nos dice la tabla anterior?* 
+
+Que del total de mujeres que solicitaron admisión, fueron rechazadas casi el 70 % de ellas, mientras que de los hombres que solicitaron admisión, tan solo fueron rechazados el 55 %.
+
+**¿A qué conclusión llegamos entonces al ver estas tablas? Comenten entre todos.**
 
 # Desagregando los datos por Departamento. 
 
-Ahora, vamos a desagregar los datos por departamento, para ver si hay departamentos que aportan más a la discriminación en las admisiones por género. 
+Hay una variable que hace falta analizar: la admisión por departamento. 
 
-```{r}
+Para esto, vamos a desagregar los datos por departamento, para ver si hay departamentos que aportan más a la discriminación en las admisiones por género. 
 
+**¿Cómo se les ocurre que podamos afrontar esto analizando por departamento?. Comenten entre todos.**
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
 # 1. Cuantos departamentos hay? 
 get_labels(Ad$Departamento)
-# Hay 5 departamentos. 
+# Hay 6 departamentos. 
+```
 
+```{r cache=FALSE, message=FALSE, warning=FALSE}
 # Obtenemos una flat_table de 3 variables 
 flat_table(data = Ad, Admitido, Sexo, Departamento)
+```
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
 flat_table(data = Ad, Admitido, Sexo, Departamento, margin = "col")
+```
 
-# Obtenemos las flat_tables por departamento: 
-
+```{r cache=FALSE, message=FALSE, warning=FALSE}
 # A
+
+# Tabla
 Ad %>% 
   filter(Departamento == "A") %>% 
   flat_table(Admitido, Sexo, margin = "row")
 
+# Grafica
+Ad %>% 
+  group_by(Departamento, Sexo, Admitido) %>% 
+  count() %>% 
+  # Aqui contamos los admitidos y rechazados por Dpto y Sexo
+  filter(Departamento == "A") %>% 
+  # Aqui nos quedamos solo con los del Dpto. A
+  ggplot(aes(x = as_factor(Sexo), 
+             y = n, 
+             fill = as_factor(Admitido))) + 
+  # Aquí declaramos los elementos Estéticos (los canales de Segasi)
+  geom_col(position = "dodge") 
+  # Aquí declaramos los elementos Geométricos (las marcas de Segasi)
+
+```
+
+
+```{r cache=FALSE, message=FALSE, warning=FALSE}
 # B
 Ad %>% 
   filter(Departamento == "B") %>% 
   flat_table(Admitido, Sexo, margin = "row")
+
+# Grafica
+Ad %>% 
+  group_by(Departamento, Sexo, Admitido) %>% 
+  count() %>% 
+  # Aqui contamos los admitidos y rechazados por Dpto y Sexo
+  filter(Departamento == "B") %>% 
+  # Aqui nos quedamos solo con los del Dpto. A
+  ggplot(aes(x = as_factor(Sexo), 
+             y = n, 
+             fill = as_factor(Admitido))) + 
+  # Aquí declaramos los elementos Estéticos (los canales de Segasi)
+  geom_col(position = "dodge") 
+  # Aquí declaramos los elementos Geométricos (las marcas de Segasi)
 
 # C
 Ad %>% 
   filter(Departamento == "C") %>% 
   flat_table(Admitido, Sexo, margin = "row")
 
+# Grafica
+Ad %>% 
+  group_by(Departamento, Sexo, Admitido) %>% 
+  count() %>% 
+  # Aqui contamos los admitidos y rechazados por Dpto y Sexo
+  filter(Departamento == "C") %>% 
+  # Aqui nos quedamos solo con los del Dpto. A
+  ggplot(aes(x = as_factor(Sexo), 
+             y = n, 
+             fill = as_factor(Admitido))) + 
+  # Aquí declaramos los elementos Estéticos (los canales de Segasi)
+  geom_col(position = "dodge") 
+  # Aquí declaramos los elementos Geométricos (las marcas de Segasi)
+
 # D
 Ad %>% 
   filter(Departamento == "D") %>% 
   flat_table(Admitido, Sexo, margin = "row")
+
+# Grafica
+Ad %>% 
+  group_by(Departamento, Sexo, Admitido) %>% 
+  count() %>% 
+  # Aqui contamos los admitidos y rechazados por Dpto y Sexo
+  filter(Departamento == "D") %>% 
+  # Aqui nos quedamos solo con los del Dpto. A
+  ggplot(aes(x = as_factor(Sexo), 
+             y = n, 
+             fill = as_factor(Admitido))) + 
+  # Aquí declaramos los elementos Estéticos (los canales de Segasi)
+  geom_col(position = "dodge") 
+  # Aquí declaramos los elementos Geométricos (las marcas de Segasi)
 
 # E
 Ad %>% 
   filter(Departamento == "E") %>% 
   flat_table(Admitido, Sexo, margin = "row")
 
-```
+# Grafica
+Ad %>% 
+  group_by(Departamento, Sexo, Admitido) %>% 
+  count() %>% 
+  # Aqui contamos los admitidos y rechazados por Dpto y Sexo
+  filter(Departamento == "E") %>% 
+  # Aqui nos quedamos solo con los del Dpto. A
+  ggplot(aes(x = as_factor(Sexo), 
+             y = n, 
+             fill = as_factor(Admitido))) + 
+  # Aquí declaramos los elementos Estéticos (los canales de Segasi)
+  geom_col(position = "dodge") 
+  # Aquí declaramos los elementos Geométricos (las marcas de Segasi)
 
-**¿A qué conclusiones llegamos al ver estas tablas?** 
+```
 
 
 # Gráficas 
 
-Realizaremos ahora gráficas para explorar los datos. 
+Realizaremos ahora gráficas para hacer la comparativa final: 
 
 ```{r cache=FALSE, message=FALSE, warning=FALSE}
 # Librerias
