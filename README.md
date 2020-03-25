@@ -8,7 +8,7 @@ Repaso de R-base y R-tidy. Conceptos, forma de trabajo, operadores, filosofía, 
 
 ### Laboratorio 2.
 
-Continuación de la exploración de bases de datos del Twitter. Se repasó el concepto de _medidas de tendencia central_ (media, mediana y moda), los casos en que se utiliza cada una y su aplicación a una base de datos. Igualmente, se hizo un repaso de `Rmarkdown` y se corroboró que no había problemas al descargar la librería {`haven`} (no _heaven_ ni _heaven_).
+Continuación de la exploración de bases de datos del Twitter. Se repasó el concepto de _medidas de tendencia central_ (media, mediana y moda), los casos en que se utiliza cada una y su aplicación a una base de datos. Igualmente, se hizo un repaso de `Rmarkdown` y se corroboró que no había problemas al descargar la librería {`haven`} (no _heaven_ ni _haeven_).
 
 ### Laboratorio 3.
 
