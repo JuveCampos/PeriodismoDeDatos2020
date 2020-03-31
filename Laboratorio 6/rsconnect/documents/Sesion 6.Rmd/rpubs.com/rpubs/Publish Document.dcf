@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/592624/c3e74863ff2d4a8d9bd01ce39a307bb1
+bundleId: https://api.rpubs.com/api/v1/document/592624/c3e74863ff2d4a8d9bd01ce39a307bb1
+url: http://rpubs.com/Juve_Campos/592624
+when: 1585675903.45771
