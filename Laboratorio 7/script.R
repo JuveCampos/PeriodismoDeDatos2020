@@ -7,8 +7,8 @@ library(tidyverse)
 
 # Datos 
 # Ecuacion Y = 150 + 20X 
-# Donde X puede ir de 0 hasta 20 
-# Donde Y va de 150 a 1150
+# Donde X puede ir de _ hasta __ 
+# Donde Y va de ___ a ____
 
 X = 0:20
 Y = 150 + 50*X 
@@ -33,6 +33,12 @@ tibble(educ = educacion, ing = ingreso) %>%
   theme_bw()
 
 error <- rnorm(n = 1000, mean = 0, sd = 100)
+
+# Como se distribuye este error
+error %>% 
+  as_tibble() %>% 
+  ggplot(aes(value)) + geom_density()
+
 ingreso <- ingreso + error
 
 tibble(educ = educacion, ing = ingreso) %>% 
