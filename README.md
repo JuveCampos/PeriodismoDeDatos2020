@@ -32,7 +32,7 @@ Se revisó el concepto de función matemática, así como conceptos relacionados
 
 ### Laboratorio 8. Introducción rápida a la regresión. 
 
-Repaso breve de dudas sobre formas funcionales de ajustes de los datos a los modelos (linea recta, cuadrática, etc.) e introducción a la teoría de la regresión, así como a la elaboración de modelos de regresión a través de R. 
+Repaso breve de dudas sobre formas funcionales de ajustes de los datos a los modelos (linea recta, cuadrática, etc.) e introducción a la teoría de la regresión, así como a la elaboración de un primer modelo a través de R. 
 
 
 
