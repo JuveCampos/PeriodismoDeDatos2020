@@ -25,3 +25,9 @@ Laboratorio de repaso donde practicamos las tablas de contingencia en un ejemplo
 ### Laboratorio 6. Sobre correlaciones y medias condicionales.
 
 Sesión en la que revisamos el concepto de medias condicionales y el concepto de correlaciones con los coeficientes de _Pearson_ y _Spearman_. En términos de programación, se revisaron las funciones `cor()` y `tapply()` para obtener correlaciones y medias condicionales, respectivamente. El enlace al documento de este laboratorio puede encontrarse en el siguiente [enlace](https://rpubs.com/Juve_Campos/sesion6pdd2020).
+
+### Laboratorio 7. Sobre funciones. 
+
+Se revisó el concepto de función matemática, así como conceptos relacionados como: **dominio** y **contradominio**. Igualmente, se revisaron las relaciones lineales entre variables, como graficar funciones a mano, como entender el **intercepto** y la **pendiente** y se trabajo con un ejemplo de ingreso explicado por educación. Se repasó también el uso de la función `rnorm()` y se introdujo brevemente la aplicación de la regresión y el concepto del **error**.
+
+
