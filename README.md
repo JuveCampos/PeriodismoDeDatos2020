@@ -30,4 +30,9 @@ Sesión en la que revisamos el concepto de medias condicionales y el concepto de
 
 Se revisó el concepto de función matemática, así como conceptos relacionados como: **dominio** y **contradominio**. Igualmente, se revisaron las relaciones lineales entre variables, como graficar funciones a mano, como entender el **intercepto** y la **pendiente** y se trabajo con un ejemplo de ingreso explicado por educación. Se repasó también el uso de la función `rnorm()` y se introdujo brevemente la aplicación de la regresión y el concepto del **error**.
 
+### Laboratorio 8. Introducción rápida a la regresión. 
+
+Repaso breve de dudas sobre formas funcionales de ajustes de los datos a los modelos (linea recta, cuadrática, etc.) e introducción a la teoría de la regresión, así como a la elaboración de un primer modelo a través de R. 
+
+
 
