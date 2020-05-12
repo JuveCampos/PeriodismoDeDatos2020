@@ -26,13 +26,18 @@ Laboratorio de repaso donde practicamos las tablas de contingencia en un ejemplo
 
 Sesión en la que revisamos el concepto de medias condicionales y el concepto de correlaciones con los coeficientes de _Pearson_ y _Spearman_. En términos de programación, se revisaron las funciones `cor()` y `tapply()` para obtener correlaciones y medias condicionales, respectivamente. El enlace al documento de este laboratorio puede encontrarse en el siguiente [enlace](https://rpubs.com/Juve_Campos/sesion6pdd2020).
 
-### Laboratorio 7. Sobre funciones. 
+### Laboratorio 7. Sobre funciones.
 
 Se revisó el concepto de función matemática, así como conceptos relacionados como: **dominio** y **contradominio**. Igualmente, se revisaron las relaciones lineales entre variables, como graficar funciones a mano, como entender el **intercepto** y la **pendiente** y se trabajo con un ejemplo de ingreso explicado por educación. Se repasó también el uso de la función `rnorm()` y se introdujo brevemente la aplicación de la regresión y el concepto del **error**.
 
-### Laboratorio 8. Introducción rápida a la regresión. 
+### Laboratorio 8. Introducción rápida a la regresión.
 
-Repaso breve de dudas sobre formas funcionales de ajustes de los datos a los modelos (linea recta, cuadrática, etc.) e introducción a la teoría de la regresión, así como a la elaboración de un primer modelo a través de R. 
+Repaso breve de dudas sobre formas funcionales de ajustes de los datos a los modelos (linea recta, cuadrática, etc.) e introducción a la teoría de la regresión, así como a la elaboración de un primer modelo a través de R.
 
+### Laboratorio 9. Ejercicios de regresión.
 
+Ejercicios para practicar la regresión lineal univariada y multivariada a partir de 4 bases de datos: una de presión sanguínea, otra de salud, otra de valor de casas en LA, y otra de calificaciones de exámenes de psicología. **Esta sesión no la llegamos a tener por motivos personales, pero queda el material disponible para hacer el repaso.**
 
+### Laboratorio 10. Sobre el sesgo de variables omitidas.
+
+A partir de la base de `pitufi.csv` de cosecha de _pitufifresas_ en la aldea de los _pitufos_ (vista en la tarea), vimos un ejemplo para explicar el sesgo por variable omitida. Igualmente, aprovechamos para meter a colación el concepto de $R^2$, el de `sesgo` y el método para hacer regresiones a partir de múltiples variables.
