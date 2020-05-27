@@ -189,7 +189,7 @@ prop_gatos_gustan_whiskas
 
 ``` 
 
-En este caso, vemos que el whiskas les gusta al 88.8 % de los gatos de la muestra, por lo que podriamos pensar que los dueños de whiskas estan haciendo publicidad engañosa. 
+En este caso, vemos que el whiskas les gusta al `r prop_gatos_gustan_whiskas*100` % de los gatos de la muestra, por lo que podriamos pensar que los dueños de whiskas estan haciendo publicidad engañosa. 
 
 Ahora, hay que sacar los intervalos de confianza con el siguiente método: 
 
@@ -237,6 +237,8 @@ ee <- sd(muestra$gusta_whiskas)/sqrt(1000)
 ee  
 ```
 
+El error estándar es igual a `r ee`.
+
 ### Paso 3) . Obtengo el intervalo superior y el inferior del intervalo. 
 
 Para obtener el valor superior e inferior del intervalo de confianza al 95%, habrá que multiplicar el error estándar (que en este caso actuará como la desviación estándar) por el valor de 1.96 que conseguimos en el paso 1, y esto se lo sumamos y restamos a la estimación de la media: 
@@ -247,14 +249,15 @@ lim_sup <- prop_gatos_gustan_whiskas + 1.96*ee
 lim_inf <- prop_gatos_gustan_whiskas - 1.96*ee  
 
 # Resultados. 
-tibble(lim_inf,
+resultados <- tibble(lim_inf,
        prop_gatos_gustan_whiskas, 
        lim_sup, ee) %>% 
   mutate(margen = 1.96*ee)
 
+resultados
 ```
 
-Entonces, podemos concluir que el promedio de gatos a los que les gusta el whiskas es de 88.8 % +-1.95% con intervalos de confianza de (86.84% a 90.75%) al 95% de confianza. 
+Entonces, podemos concluir que el promedio de gatos a los que les gusta el whiskas es de `r prop_gatos_gustan_whiskas*100` % +- `r 1.96*ee` % con intervalos de confianza de (`r resultados$lim_inf`% a `r resultados$lim_sup`%) al 95% de confianza. 
 
 Como el valor del 90% (el verdadero valor con el que creamos a los gatos) se encuentra dentro de este intervalo de confianza y del margen de error, no podemos acusar a los dueños de whiskas de publicidad engañosa. 
 
