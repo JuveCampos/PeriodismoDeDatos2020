@@ -1,0 +1,351 @@
+---
+title: "Sesión 12 - Periodismo de datos"
+author: "Juvenal Campos"
+date: "5/26/2020"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Sesión 12 - Distribución normal e intervalos de confianza. 
+
+Durante esta sesión vamos a revisar ejemplos de uso de la distribución normal, y vamos a realizar un ejemplo rápido para calcular el intervalo de confianza de una campaña publicitaria. 
+
+### Librerias a utilizar. 
+
+```{r message=FALSE, cache=FALSE, warning=FALSE}
+# Librerias
+library(tidyverse)  # Manejo de datos
+library(moderndive) # Generacion de muestras
+```
+
+### Parte 1. Repaso de funciones de la distribución normal. 
+
+Para trabajar con la distribución normal, tenemos 3 funciones principales: 
+
+1. `rnorm()`, para simular observaciones provenientes de una variable aleatoria que distribuye de manera normal. 
+
+2. `pnorm()`, para obtener el valor de la probabilidad que se acumula hasta un valor `q` de la variable aleatoria. 
+
+3. `qnorm()`, para obtener el valor de la variable aleatoria hasta el cual se acumula cierta probabilidad o proporción. 
+
+Estas funciones tienen los siguientes argumentos: 
+
+* `mean`, el valor de la media de la distribución normal. 
+
+* `sd`, el valor de la desviación estándar. 
+
+* `p`, el valor de la probabilidad acumulada hasta el cual se obtiene el valor `q`. 
+
+* `q`, el valor de la variable aleatoria hasta el cual se acumula la probabilidad `p`.
+
+**Ejemplo**
+
+Vamos a simular tres distintas poblaciones. Para el presente ejemplo, simularemos las calificaciones de 3 exámenes estandarizados diferentes aplicados a 100,000 estudiantes. 
+
+```{r}
+# 1. Simular una normal
+calif <- rnorm(n = 100000, 
+               mean = 5, # Calificacion promedio
+               sd = 1.5) # Desviacion estandar
+
+calif2 <- rnorm(n = 1e5, 
+                mean = 3, # Calificacion promedio
+                sd = 0.9) # Desviacion estandar
+
+calif3 <- rnorm(n = 1e5, 
+                mean = 7, # Calificacion promedio
+                sd = 1.5) # Desviacion estandar
+```
+
+A continuación, guardamos los datos en una tibble para graficar: 
+
+```{r}
+# Lo guardamos en una tibble
+calificaciones <- tibble(examen1 = calif, # columna 1
+                         examen2 = calif2, # columna 2
+                         examen3 = calif3) %>% # columna 3
+  pivot_longer(cols = c(examen1, examen2, examen3))
+```
+
+**Nota:** Uso `pivot_longer()` solo para graficar. Si quieres saber como funciona te recomiendo visitar este [enlace](https://juvenalcampos.com/2020/01/26/visualizando-pirámides-de-población-en-r/) donde explico su funcionamiento en la segunda imágen. 
+
+Hacemos la gráfica de las poblaciones simuladas: 
+
+```{r}
+# Grafica
+ggplot(calificaciones, 
+       aes(x = value, 
+           color = name)) + 
+  geom_density() 
+```
+
+En la gráfica anterior podemos visualizar las tres poblaciones generadas mediante simulación. La roja y la azul tienen la misma abertura, aunque estan centradas en diferentes medias; la verde está centrada en una media menor y está mas delgada, lo cual se debe a que tiene una desviación estándar (dispersión) menor. De aquí se concluye que la **media** es el valor que da la posición a la curva normal, mientras que la **desviación estándar** (dispersión) es la que nos dá la apertura (gordura) de la curva.  
+
+### Uso de `qnorm()` y `pnorm()`.
+
+A continuación veremos como utilizar las funciones `qnorm()` y `pnorm()`.
+
+**Ejemplo de qnorm()**
+
+* `qnorm()` - Siguiendo el ejemplo del exámen, la función nos dará el valor de las calificaciones para el cual tenemos x% de las observaciones
+
+```{r}
+# EL valor para el cual tenemos el 5% mas reprobado. 
+qnorm(p = 0.05, 
+      mean = 5, 
+      sd = 1.5)
+```
+
+```{r}
+# El valor del cual parte el 5% mas alto
+qnorm(p = 0.95, 
+      mean = 5, 
+      sd = 1.5)
+```
+
+**Ejemplo de `pnorm()`**
+
+En el contexto del exámen, dada la calificacion (el valor de la variable aleatoria) vamos a sacar la proporcion de alumnos que obtivieron ese valor de calificación o uno mas bajo. 
+
+Supongamos que queremos obtener la proporción de alumnos que obtuvieron una calificación igual o menor a 7.46728: 
+
+```{r}
+# Porcentaje de alumnos que sacaron una calificación 
+# igual o menor a 7.46728:
+pnorm(q = 7.46728, 
+      mean = 5, 
+      sd = 1.5)
+```
+
+```{r echo = FALSE}
+# Porcentaje de alumnos que sacaron una calificación 
+# igual o menor a 7.46728:
+tibble(datos = 
+      rnorm(n = 100000,
+      mean = 5, 
+      sd = 1.5)) %>% 
+  ggplot(aes(x = datos)) + 
+    geom_density() + 
+    geom_vline(xintercept = 7.46728, 
+               color = "blue", 
+               linetype = 2) + 
+  labs(caption = "pnorm(q = 7.46728, mean = 5, sd = 1.5)\nnos da el área bajo la curva a la izquierda de la línea marcada.")
+
+
+```
+
+
+El resultado de arriba es la proporción de alumnos que obtuvieron una calificación menor o igual a 7.46728. Igualmente, esta es la probabilidad de obtener al azar un exámen con una calificación menor o igual a 7.46728. 
+
+# Cálculo de los intervalos de confianza
+
+**Definición: ** La distribucion muestral es la distribucion que resulta de considerar todas las muestras posibles que pueden ser tomadas de una poblacion.
+
+### Ejemplo de Whiskas. 
+
+( _A petición del hermano de Ariadna_ ) supongamos que queremos comprobar el slogan de Whiskas de que _9 de cada 10 gatos prefieren whiskas._
+
+Supongamos que somos el dios de los gatos y creamos 1 Millón de gatos, y que definimos que a 9 de cada 10 de esos gatos les va a gustar el Whiskas. Para crear esos gatos, utilizamos el siguiente código:  
+
+```{r}
+# CREANDO LOS GATOS 
+
+# 1 si les gusta el whiskas, 0 si no
+gatos <- c(rep(1,900000),      # 900,000 que si 
+           rep(0,100000)) %>%  # 100,000 que no. 
+  sample() # revolvemos los datos para disimular :9
+
+# Guardamos los datos de los gatos en una tibble. 
+gatos <- tibble(gusta_whiskas = gatos)
+
+```
+
+<b style = 'color:red;'>Ahora, olvidemos que sabemos como está construida la población.</b>
+
+Obtenemos una muestra de tamaño 1,000 de esos gatos, y "entrevistamos" a estos 1,000 gatos para ver si les gusta el whiskas. 
+
+```{r}
+# Semilla
+set.seed(252) 
+#4 # Obtención de la muestra: 
+muestra <- gatos %>% 
+  rep_sample_n(size = 1000, # gatos entrevistados
+               replace = T, # Misma probab. para todos. 
+               reps = 1) # Una sola muestra. 
+
+# Sacamos el porcentaje de gatos 
+# a los que les gusta el whiskas. 
+prop_gatos_gustan_whiskas <- muestra %>% 
+  summarise(promedio_gatos_gusta_whiskas = mean(gusta_whiskas)) %>% 
+  pull(promedio_gatos_gusta_whiskas)
+
+prop_gatos_gustan_whiskas
+
+``` 
+
+En este caso, vemos que el whiskas les gusta al 88.8 % de los gatos de la muestra, por lo que podriamos pensar que los dueños de whiskas estan haciendo publicidad engañosa. 
+
+Ahora, hay que sacar los intervalos de confianza con el siguiente método: 
+
+1. Defino el nivel de confianza de mi intervalo de confianza (típicamente 90, 95 o 99%, nunca 100%).
+
+2. Obtengo el error estándar. 
+
+3. Obtengo el intervalo superior y el inferior de intervalo. 
+
+### Paso 1) Defino mi nivel de confianza. 
+
+El nivel de confianza es algo que define el investigador o que se define antes de hacer una investigación. En este caso, utilizaremos el nivel de confianza del 95% por ser el más común. 
+
+Ahora, con este valor, tenemos que escoger el valor de las desviaciones estándar que encierran al 95% de todos los casos posibles. 
+
+Recordemos que: 
+
+* A 1 desviación estándar se encierra al 68.3% de la probabilidad. 
+
+* A 2 desviaciones estándar se encierra el 95.4% de la probabilidad. 
+
+* A 3 desviaciones estándar se encierra el 99.7% de la probabilidad total. 
+
+Dado que nosotros queremos encerrar solo al 95% de todos los casos posibles, necesitamos un valor menor a 2 desviaciones estándar. Buscando en la literatura (_wikipedia_) vemos que el valor de desviaciones estándar que encierran al 95% de los casos posibles es el de 1.959964, que redondeando nos dá *1.96* desviaciones estándar. Este número lo utilizaremos más adelante. 
+
+### Paso 2) Obtener el error estándar. 
+
+El error estándar es un número que se calcula con la siguiente fórmula: 
+
+$${\displaystyle SE_{\bar {x}}\ ={\frac {s}{\sqrt {n}}}}$$
+FUENTE: https://es.wikipedia.org/wiki/Error_estándar
+
+**Donde: **
+
+* $SE_{\bar {x}}$,  es el error estándar del estimador muestral (de la proporción de gatos a los que les gusta el whiskas). 
+
+* $s$, es la desviación estándar de la muestra. 
+
+* $n$, es el tamaño de la muestra (1,000 gatos). 
+
+Calculamos: 
+
+```{r}
+ee <- sd(muestra$gusta_whiskas)/sqrt(1000)
+ee  
+```
+
+### Paso 3) . Obtengo el intervalo superior y el inferior del intervalo. 
+
+Para obtener el valor superior e inferior del intervalo de confianza al 95%, habrá que multiplicar el error estándar (que en este caso actuará como la desviación estándar) por el valor de 1.96 que conseguimos en el paso 1, y esto se lo sumamos y restamos a la estimación de la media: 
+
+```{r}
+# Limites superior e inferior del intervalo de confianza. 
+lim_sup <- prop_gatos_gustan_whiskas + 1.96*ee  
+lim_inf <- prop_gatos_gustan_whiskas - 1.96*ee  
+
+# Resultados. 
+tibble(lim_inf,
+       prop_gatos_gustan_whiskas, 
+       lim_sup, ee) %>% 
+  mutate(margen = 1.96*ee)
+
+```
+
+Entonces, podemos concluir que el promedio de gatos a los que les gusta el whiskas es de 88.8 % +-1.95% con intervalos de confianza de (86.84% a 90.75%) al 95% de confianza. 
+
+Como el valor del 90% (el verdadero valor con el que creamos a los gatos) se encuentra dentro de este intervalo de confianza y del margen de error, no podemos acusar a los dueños de whiskas de publicidad engañosa. 
+
+**Hasta aquí termina el procedimiento de obtener un intervalo de confianza.**
+
+Ahora, repasemos conceptos que no dejamos claros dentro del procedimiento anterior: 
+
+### 1) La distribución muestral y el error estándar. 
+
+_(Esto es extra para explicar de donde vienen ciertos conceptos explicados arriba)._
+
+Vamos a crear la distribución muestral. La distribución muestral es la distribución de probabilidad que resultaría de realizar muchas veces un ejercicio de muestreo. 
+
+Recordando del ejercicio anterior: 
+
+```{r}
+#4 # Obtención de la muestra: 
+muestra <- gatos %>% 
+  rep_sample_n(size = 1000, # gatos entrevistados
+               replace = T, # Misma probab. para todos. 
+               reps = 1) # Una sola muestra.
+
+# Sacamos el porcentaje de gatos 
+# a los que les gusta el whiskas. 
+prop_gatos_gustan_whiskas <- muestra %>% 
+  summarise(promedio_gatos_gusta_whiskas = mean(gusta_whiskas)) %>% 
+  pull(promedio_gatos_gusta_whiskas)
+
+prop_gatos_gustan_whiskas
+
+```
+
+Este código nos da una muestra de los gatos, de tamaño mil, y luego saca el promedio de los gatos a los que les gusta el whiskas. Si modificamos el argumento `reps = 1` a, por ejemplo, `reps = 10000`, tendriamos diez mil proporciones de diez mil muestras de gatos a los que les gusta el whiskas: 
+
+```{r}
+#4 # Obtención de la muestra: 
+muestra <- gatos %>% 
+  rep_sample_n(size = 1000, # gatos entrevistados
+               replace = T, # Misma probab. para todos. 
+               reps = 10000) # 10000 VECES REPETIMOS EL MUESTREO
+
+# Sacamos el porcentaje de gatos 
+# a los que les gusta el whiskas. 
+prop_gatos_gustan_whiskas <- muestra %>% 
+  summarise(promedio_gatos_gusta_whiskas = mean(gusta_whiskas)) 
+
+prop_gatos_gustan_whiskas
+
+```
+
+Entonces, de la tabla anterior, tenemos que la columna `replicate` almacena el número de cada uno de los ejercicios de muestreo, y la columna `promedio_gatos_gusta_whiskas` guarda el promedio de cada una de estas muestras. 
+
+El resultado de la proporción de cada una de las muestras es una variable aleatoria (porque el resultado cambia por el azar) y por lo tanto, al repetirse multiples veces, tiene una distribución de probabilidad. Por el [teorema del límite central](https://es.wikipedia.org/wiki/Teorema_del_l%C3%ADmite_central) sabemos que estos resultados muestrales distribuyen de manera **normal** y la gráfica de los posibles resultados que pudimos haber obtenido son los siguientes: 
+
+```{r}
+# grafica de los promedios de los gatos que les gusta whiskas
+prop_gatos_gustan_whiskas %>% 
+  ggplot(aes(x = promedio_gatos_gusta_whiskas)) + 
+  geom_density() + 
+  scale_x_continuous(breaks = seq(0.7, 1, by = 0.01))
+```
+
+Esta gráfica de arriba ejemplifica las posibles proporciones de los gatos a los que les gusta el whiskas. Va a haber muestras en donde solo al 87% les gusta el whiskas y otras donde a más del 93% les gusta el whiskas, pero la probabilidad de tener ests muestras es muy pequeña. 
+
+Esta es, entonces, la **distribución muestral**; la distribución de los resultados obtenidos por multiples muestras de un estadístico que nos interesa (en este caso, la proporción de gatos a los que les gusta el whiskas, pero podría ser la proporción de personas que van a votar por un candidato o el promedio de pitufresas contagiadas con chocofresa en una parcela de la aldea de los pitufos).
+
+La estimación de la media de la población podemos obtenerla sacando la media de la **distribución muestral**: 
+
+Y para concluir, el **error estándar** es, entonces, la desviación estándar de esta distribución muestral de posibles resultados: 
+
+```{r}
+# Calculo del error estándar 
+ee = 
+  sd(prop_gatos_gustan_whiskas$promedio_gatos_gusta_whiskas)
+```
+
+Como vemos, es muy similar al calculado arriba. 
+
+El error estándar es una medida de lo dispersos que pueden estar los resultados de nuestros muestreos: entre más pequeño sea este, es mejor. Igualmente, este error nos sirve para cuantificar la incertidumbre de nuestras estimaciones y para construir nuestros intervalos de confianza (como igual vimos arriba). 
+
+Cuando no podemos sacar la distribución muestral, podemos simplemente aplicar la fórmula del error estándar: 
+
+$${\displaystyle SE_{\bar {x}}\ ={\frac {s}{\sqrt {n}}}}$$
+
+**Donde: **
+
+* $SE_{\bar {x}}$,  es el error estándar del estimador muestral. 
+
+* $s$, es la desviación estándar de la muestra. 
+
+* $n$, es el tamaño de la muestra. 
+
+(Esta fórmula también la usamos arriba).
+
