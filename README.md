@@ -41,3 +41,10 @@ Ejercicios para practicar la regresión lineal univariada y multivariada a parti
 ### Laboratorio 10. Sobre el sesgo de variables omitidas.
 
 A partir de la base de `pitufi.csv` de cosecha de _pitufifresas_ en la aldea de los _pitufos_ (vista en la tarea), vimos un ejemplo para explicar el sesgo por variable omitida. Igualmente, aprovechamos para meter a colación el concepto de $R^2$, el de `sesgo` y el método para hacer regresiones a partir de múltiples variables.
+
+### Laboratorio 11. Probabilidad e introducción a las distribuciones de probabilidad con R. 
+
+Introducción a conceptos teóricos de probabilidad y simulación de eventos cuya probabilidad tiene cierta distribución, a través del uso de R. 
+
+
+
