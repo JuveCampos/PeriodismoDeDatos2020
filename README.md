@@ -46,5 +46,10 @@ A partir de la base de `pitufi.csv` de cosecha de _pitufifresas_ en la aldea de 
 
 Introducción a conceptos teóricos de probabilidad y simulación de eventos cuya probabilidad tiene cierta distribución, a través del uso de R. 
 
+### Laboratorio 12. 
+
+Repaso de funciones de manejo de la distribución normal (`rnorm()`, `pnorm()` y `qnorm()`), así como introducción a intervalos de confianza, distribución muestral y error estándar. Los apuntes (código) pueden consultarse en este [enlace](https://rpubs.com/Juve_Campos/Sesion12LaboratorioPdd20202) y los apuntes de clase dentro de la carpeta del repositorio. 
+
+
 
 
