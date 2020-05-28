@@ -2,15 +2,15 @@
 
 Repositorio de materiales utilizados en el laboratorio de Periodismo de Datos de la MPPP del CIDE, primer semestre del 2020.
 
-### Laboratorio 1.
+### Laboratorio 1. R-base y R-tidy.
 
 Repaso de R-base y R-tidy. Conceptos, forma de trabajo, operadores, filosofía, etc. Consulte el material en este [enlace](https://rpubs.com/Juve_Campos/rtidyrbase)
 
-### Laboratorio 2.
+### Laboratorio 2. Repaso de medidas de tendencia central. 
 
 Continuación de la exploración de bases de datos del Twitter. Se repasó el concepto de _medidas de tendencia central_ (media, mediana y moda), los casos en que se utiliza cada una y su aplicación a una base de datos. Igualmente, se hizo un repaso de `Rmarkdown` y se corroboró que no había problemas al descargar la librería {`haven`} (no _heaven_ ni _haeven_).
 
-### Laboratorio 3.
+### Laboratorio 3. Etiquetas y bases de datos etiquetadas.
 
 Se hizo un repaso sobre las librerías `sjmisc` y `sjlabelled`, al uso de bases de datos etiquetadas y a otros conceptos relacionados. Para repasar la práctica, revisar el material de este [enlace](https://rpubs.com/Juve_Campos/labeledData).
 
@@ -46,7 +46,7 @@ A partir de la base de `pitufi.csv` de cosecha de _pitufifresas_ en la aldea de 
 
 Introducción a conceptos teóricos de probabilidad y simulación de eventos cuya probabilidad tiene cierta distribución, a través del uso de R. 
 
-### Laboratorio 12. 
+### Laboratorio 12. Distribución normal e intervalos de confianza. 
 
 Repaso de funciones de manejo de la distribución normal (`rnorm()`, `pnorm()` y `qnorm()`), así como introducción a intervalos de confianza, distribución muestral y error estándar. Los apuntes (código) pueden consultarse en este [enlace](https://rpubs.com/Juve_Campos/Sesion12LaboratorioPdd20202) y los apuntes de clase dentro de la carpeta del repositorio. 
 
