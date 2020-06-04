@@ -2,15 +2,15 @@
 
 Repositorio de materiales utilizados en el laboratorio de Periodismo de Datos de la MPPP del CIDE, primer semestre del 2020.
 
-### Laboratorio 1.
+### Laboratorio 1. R-base y R-tidy.
 
 Repaso de R-base y R-tidy. Conceptos, forma de trabajo, operadores, filosofía, etc. Consulte el material en este [enlace](https://rpubs.com/Juve_Campos/rtidyrbase)
 
-### Laboratorio 2.
+### Laboratorio 2. Repaso de medidas de tendencia central.
 
 Continuación de la exploración de bases de datos del Twitter. Se repasó el concepto de _medidas de tendencia central_ (media, mediana y moda), los casos en que se utiliza cada una y su aplicación a una base de datos. Igualmente, se hizo un repaso de `Rmarkdown` y se corroboró que no había problemas al descargar la librería {`haven`} (no _heaven_ ni _haeven_).
 
-### Laboratorio 3.
+### Laboratorio 3. Etiquetas y bases de datos etiquetadas.
 
 Se hizo un repaso sobre las librerías `sjmisc` y `sjlabelled`, al uso de bases de datos etiquetadas y a otros conceptos relacionados. Para repasar la práctica, revisar el material de este [enlace](https://rpubs.com/Juve_Campos/labeledData).
 
@@ -42,15 +42,14 @@ Ejercicios para practicar la regresión lineal univariada y multivariada a parti
 
 A partir de la base de `pitufi.csv` de cosecha de _pitufifresas_ en la aldea de los _pitufos_ (vista en la tarea), vimos un ejemplo para explicar el sesgo por variable omitida. Igualmente, aprovechamos para meter a colación el concepto de $R^2$, el de `sesgo` y el método para hacer regresiones a partir de múltiples variables.
 
-### Laboratorio 11. Probabilidad e introducción a las distribuciones de probabilidad con R. 
+### Laboratorio 11. Probabilidad e introducción a las distribuciones de probabilidad con R.
 
-Introducción a conceptos teóricos de probabilidad y simulación de eventos cuya probabilidad tiene cierta distribución, a través del uso de R. 
+Introducción a conceptos teóricos de probabilidad y simulación de eventos cuya probabilidad tiene cierta distribución, a través del uso de R.
 
-### Laboratorio 12. Distribución normal e Intervalos de Confianza. 
+### Laboratorio 12. Distribución normal e intervalos de confianza.
 
-Repaso de funciones de manejo de la distribución normal (`rnorm()`, `pnorm()` y `qnorm()`), así como introducción a intervalos de confianza, distribución muestral y error estándar. Los apuntes (código) pueden consultarse en este [enlace](https://rpubs.com/Juve_Campos/Sesion12LaboratorioPdd20202) y los apuntes de clase dentro de la carpeta del repositorio. 
+Repaso de funciones de manejo de la distribución normal (`rnorm()`, `pnorm()` y `qnorm()`), así como introducción a intervalos de confianza, distribución muestral y error estándar. Los apuntes (código) pueden consultarse en este [enlace](https://rpubs.com/Juve_Campos/Sesion12LaboratorioPdd20202) y los apuntes de clase dentro de la carpeta del repositorio.
 
-## Laboratorio 13. Repaso final de intervalos de confianza. 
+## Laboratorio 13. Repaso final de intervalos de confianza.
 
-Repaso final de intervalos de confianza a través del cálculo de la media y sus respectivos intervalos en tres problemas prácticos. 
-
+Repaso final de intervalos de confianza a través del cálculo de la media y sus respectivos intervalos en tres problemas prácticos.
