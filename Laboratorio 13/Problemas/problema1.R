@@ -11,7 +11,25 @@
 # Datos ----
 datos <- readr::read_csv("Bases de datos/apoyoMarchaEncuesta.csv")
 
+# Exploramos los datos: 
+head(datos)
 
+# Obtenemos la media
+media <- 
+  mean(datos$respuestas)
+
+# Calculamos el Error Estandar
+ee <- sd(datos$respuestas)/sqrt(1000)
+
+# Limite superior e inferior
+lim_sup <- media + ee*qnorm(p = 0.975, mean = 0, sd = 1)
+lim_inf <- media - ee*qnorm(p = 0.975, mean = 0, sd = 1)
+
+# Conclusiones: 
+# Mi estimacion del porcentaje de personas en Mexico
+# Que esta a favor de la marcha en automovil es de 
+# el 34% +- 1.5% con un limite superior de 36.9% y un 
+# limite inferior del 31% con un nivel de confianza del 95%
 
 
 

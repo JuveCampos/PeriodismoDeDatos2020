@@ -1,0 +1,210 @@
+---
+title: "Sesión 13 - Laboratorio"
+subtitle: "Periodismo de datos"
+author: "Juvenal Campos"
+date: "6/4/2020"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<h1 style = "color:green; text-align:center;">Sesión 13<br>Problemas de Intervalos de Confianza</h1>
+
+## Problema 1 
+### Enunciado del problema 
+
+![](imgs/marcha.png)
+
+El fin de semana del 30 de junio del 2020 un grupo de ciudadanos inconformes salió a las calles a protestar en contra de las medidas del actual gobierno. La marcha fue realizada en caravanas de automóviles en diversas ciudades de la república, acción que parece ser que no fue del agrado de las redes sociales. 
+
+La maestría en Periodismo del CIDE organiza una encuesta para saber cual es la opinión de los ciudadanos sobre la marcha a una muestra aleatoria de la población mexicana, con reemplazo, a 1,000 habitantes de la república, registrando 1 si la opinión fue favorable y 0 si fue desfavorable.
+
+**Calcule la proporción de la población mexicana que está a favor de la marcha y su respectivo intervalo de confianza al 95%.**
+
+```{r cache = FALSE, message=FALSE, warning=FALSE}
+# Datos ----
+datos <- readr::read_csv("Bases de datos/apoyoMarchaEncuesta.csv")
+```
+
+```{r cache = FALSE, message=FALSE, warning=FALSE}
+# Exploramos los datos: 
+head(datos)
+
+# Obtenemos la media
+media <- 
+  mean(datos$respuestas)
+
+# Calculamos el Error Estandar
+ee <- sd(datos$respuestas)/sqrt(1000)
+
+# Limite superior e inferior
+lim_sup <- media + ee*qnorm(p = 0.975, mean = 0, sd = 1)
+lim_inf <- media - ee*qnorm(p = 0.975, mean = 0, sd = 1)
+```
+
+**Conclusiones:**
+
+Mi estimacion del porcentaje de personas en Mexico que esta a favor de la marcha en automovil es de el 34% +- 1.5% con un límite superior de 36.9% y un límite inferior del 31% con un nivel de confianza del 95%.
+
+Ahora, supongamos que _algún político del partido oficial_ hace una encuesta en twitter y resulta que el porcentaje de la población que apoya a la marcha en automovil es del 1%. En base a los resultados obtenidos arriba... ¿qué conclusión podría obtener de este estudio de Twitter? 
+
+**R: ** Que hay algo raro en la metodología que siguió el segundo estudio que hace que se encuentre sesgado, dado que el resultado se encuentra bastante lejos del límite inferior del intervalo de confianza. 
+
+## Problema 2. 
+### Enunciado del problema 
+
+![](imgs/voto.png)
+
+En la Universidad Autónoma del Estado de Morelos se quiere conocer el porcentaje de participación de los jóvenes de 18 años en las elecciones intermedias locales. 
+
+Un investigador piensa que los jóvenes de esa edad no les interesa votar por sus diputados locales o federales, mientras que otro investigador tiene la hipótesis de que, a esa edad, estan tan emocionados de tener credencial que votan en gran proporción y en grandes cantidades. 
+
+De las mil secciones electorales que hay en el estado, se consiguió una muestra aleatoria de 200 secciones, obteniendo información de la Lista Nominal (LN, total de jóvenes de 18 años en la sección) y la cantidad de estos que sí votó (SV). 
+
+**Obtenga el porcentaje de participación promedio y el intervalo de confianza de dicha estimación al 99%. ¿Qué podemos concluir de todos los jóvenes morelenses de 18 años a partir de esta muestra?**
+
+```{r cache = FALSE, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+
+# Datos ----
+datos <- readr::read_csv("Bases de datos/datosSeccionElectoralMorelos.csv") 
+
+# Pista: La participación se calcula como el cociente 
+# (la división) de los que si votaron entre el total 
+# de los que hay (LN)
+
+# Generamos la variable de participación
+datos <- datos %>% 
+  mutate(part = SV/LN)
+
+# Exploramos 
+head(datos)
+
+# Sacamos la media de la participación: 
+media <- mean(datos$part)
+media
+
+# Obtenemos los intervalos de confianza: 
+# 1. Calculamos el error estándar: 
+n <- nrow(datos)
+ee <- sd(datos$part)/sqrt(n)
+
+# Obtenemos los limites superior e inferior
+# del intervalo de confianza: 
+lim_sup <- media + qnorm(p = 0.995, 
+                         mean = 0, 
+                         sd = 1)*ee
+
+lim_inf <- media - qnorm(p = 0.005, 
+                         mean = 0, 
+                         sd = 1, 
+                         lower.tail = FALSE)*ee
+```
+
+**Conclusión de la estimación**
+
+La media de participación de los jóvenes morelenses de 18  años es del 54.8% +- 1.358% dentro de un intervalo de confianza al 99% que va desde el 51.33 al 54.8% al 99% de confianza. 
+
+Ahora, no podemos concluir si los votantes votan mas a los 18 sin analizar otro grupo de edad, por lo que se requiere hacer este análisis a mas grupos y _comparar las medias para ver si hay alguna diferencia real._
+
+## Problema 3. 
+### Enunciado del problema 
+
+![](imgs/examen.png)
+
+El gobierno, preocupado por la calificación y el mal desempeño obtenido tras las ultimas pruebas estandarizadas a jóvenes de preparatoria deciden llevar a cabo una política pública entre jóvenes de tercer año de bachillerato. Para evitar que estos tengan que trabajar, y  garantizar que tienen el material necesario para estudiar, se les   proporciona a un grupo aleatorio de jóvenes una transferencia  monetaria para que cubran sus gastos diarios, de $20,000 pesos semestrales, mientras que a otro grupo de ellos, no se les da nada (grupo de control)
+
+Se evalúa a estos dos grupos a partir de un examen estandarizado (igual para todos) para ver si el apoyo económico tiene un rendimiento sobre su desempeño académico, obteniendo las calificaciones de cada uno.
+
+**Obtenga la calificación promedio por cada grupo y su respectivo intervalo de confianza al 95% (tiene que obtener dos intervalos de confianza). Discuta, a partir de este resultado, si hay alguna diferencia entre ambos grupos.**
+
+<i style = "color:red;">Código elaborado por Ami Sosa y Luis Ernesto Mendoza Ovando</i>
+
+```{r cache = FALSE, message=FALSE, warning=FALSE}
+# Datos ---- 
+
+# Librerias
+library(dplyr)
+library(ggplot2)
+
+#Base de datos
+calificaciones <- readr::read_csv("Bases de datos/calificacionesExamenTransferencia.csv") 
+
+# Agrupamos por categoría del experimento
+Transferencias <- calificaciones %>%
+  filter(condicion=="Transferencia")
+
+Control <- calificaciones %>% 
+  filter(condicion=="Control")
+
+# Sacamos la media por categoría
+media.Transfer <- mean(Transferencias$calificaciones)
+media.Control <- mean(Control$calificaciones)
+
+# Numero de observaciones
+n<- 35
+
+# Obtenemos el error estándar de ambos grupos
+err.est.Transfer <- sd(Transferencias$calificaciones)/sqrt(n)
+err.est.Transfer 
+
+err.est.Control <- sd(Control$calificaciones)/sqrt(n)
+err.est.Control
+
+#Obtenemos los límites de los I.C.
+
+# Limites Transferencia
+# límite superior: 
+media.Transfer + err.est.Transfer*qnorm(0.025, lower.tail = F)
+# límite inferior: 
+media.Transfer - err.est.Transfer*qnorm(0.025, lower.tail = F)
+
+#Limites Control
+# límite superior: 
+media.Control + err.est.Control*qnorm(0.025, lower.tail = F)
+# límite inferior: 
+media.Control - err.est.Control*qnorm(0.025, lower.tail = F)
+
+# Visualizamos los Intervalos de Confianza: 
+plotear <- tibble(
+  media.Transfer = media.Transfer, 
+  media.Control = media.Control, 
+)
+
+ggplot() + 
+  ### Media transferencia
+  geom_vline(xintercept = media.Transfer, color = "red") + 
+  # Lim superior IC transferencia
+  geom_vline(xintercept = media.Transfer + err.est.Transfer*qnorm(0.025, lower.tail = F), 
+             color = "orange") + 
+  # Lim inferior IC transferencia
+  geom_vline(xintercept = media.Transfer - err.est.Transfer*qnorm(0.025, lower.tail = F), 
+             color = "orange") + 
+  
+  ### Media control
+  geom_vline(xintercept = media.Control, color = "blue") +
+  # Lim superior IC control
+  geom_vline(xintercept = media.Control + err.est.Control*qnorm(0.025, lower.tail = F), 
+             color = "purple") + 
+  # Lim inferior IC control
+  geom_vline(xintercept = media.Control - err.est.Control*qnorm(0.025, lower.tail = F), 
+             color = "purple") + 
+  theme_classic()
+
+```
+
+###### Linea en azul, media del grupo de control. Linea en rojo, media del grupo de transferencia. Lineas en morado: lim. superior e inferior del IC de la media del grupo de control. Lineas en naranja: lim. superior e inferior del IC de la media del grupo de transferencia. 
+
+El límite superior del grupo de control (7.250249) se traslapa con el límite inferior del grupo de tratamiento (7.128962), como se ve en la gráfica de arriba. 
+
+La región de traslape incluye todos los casos en los cuales, por pura probabilidad, pudieron haber ocurrido para ambos grupos. Para afirmar que hay un efecto, los intervalos de confianza de ambos grupos no deberían traslaparse. 
+
+Eso nos lleva a concluir que la evidencia que tenemos no apoya que la diferencia en las medias se deba a la política pública, con intervalos de confianza del 95%. Quizá valdría la pena invertir en algún otro tipo de política, con un mayor efecto sobre el rendimiento de los chavos.  
+
+
