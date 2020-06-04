@@ -50,6 +50,6 @@ Introducción a conceptos teóricos de probabilidad y simulación de eventos cuy
 
 Repaso de funciones de manejo de la distribución normal (`rnorm()`, `pnorm()` y `qnorm()`), así como introducción a intervalos de confianza, distribución muestral y error estándar. Los apuntes (código) pueden consultarse en este [enlace](https://rpubs.com/Juve_Campos/Sesion12LaboratorioPdd20202) y los apuntes de clase dentro de la carpeta del repositorio.
 
-## Laboratorio 13. Repaso final de intervalos de confianza.
+### Laboratorio 13. Repaso final de intervalos de confianza.
 
 Repaso final de intervalos de confianza a través del cálculo de la media y sus respectivos intervalos en tres problemas prácticos.
