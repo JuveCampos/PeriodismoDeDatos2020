@@ -52,7 +52,7 @@ Repaso de funciones de manejo de la distribución normal (`rnorm()`, `pnorm()` y
 
 ### Laboratorio 13. Repaso final de intervalos de confianza.
 
-Repaso final de intervalos de confianza a través del cálculo de la media y sus respectivos intervalos en tres problemas prácticos.
+Repaso final de intervalos de confianza a través del cálculo de la media y sus respectivos intervalos en tres problemas prácticos. Puede consultar el material de esta sesión en este [enlace](https://rpubs.com/Juve_Campos/sesion13LaboratorioPdD2020).
 
 #### Agradecimientos. 
 
